@@ -1,0 +1,11 @@
+Logoff script
+
+Script to provide user access control via ppms booking server
+settings for this script are configured in "1_ppmsConfig/ppmsConfig.ps1"
+
+Double click on "runMe.vbs" to configure the PC
+	Click Yes to run the script as administrator
+	The script will now install the required powershell modules and components and configure the PC which may take a few minutes
+
+
+To uninstall, Right click and open/run the uninstall script

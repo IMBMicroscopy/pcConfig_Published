@@ -1,0 +1,8 @@
+ppms Control Panel script
+
+Double click on "runMe.vbs" to install the software
+	Click Yes to run the script as administrator
+	A task scheduler task will be created to run the ppmsCP.exe file at any user logon
+	Settings for ppmsCP can be adjusted in the "ppmsConfig.ps1" script
+
+To uninstall, Right click and open/run the uninstall script

@@ -1,0 +1,19 @@
+pcConfig Instructions
+
+Download Instructions:
+	Sign in to Github, and Download the “pcConfig” code repository as a .zip file
+	Rename the downloaded folder from “pcConfig-main” to “pcConfig”
+	
+Installation instructions:
+	Log in to the Microscope PC or VM as a local administrator
+	If this is a new PC/VM install, copy the downloaded “pcConfig” folder to a location such as “C:\ “ or “C:Windows\” (Preferred)
+	
+
+The "pcConfig" folder contains sub-folders for various facility requirements including:
+
+	Automation Scripts
+		Scheduled scripts to report usage, monitor HDD space etc
+		Open "automationScripts" folder
+		follow "instructions.txt" to configure the PC and install scheduled tasks"
+
+

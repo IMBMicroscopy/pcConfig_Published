@@ -1,0 +1,87 @@
+PPMS and Other Automation Scripts for VM and Microscope Deployment
+
+Requires: Existing instrument in PPMS for full functionality
+	For auto-installation of scripts, Actual PC name should match name in PPMS
+	Alternatively, at installation, you will be asked to select the facility and instrument from a popup window, there is also a fallback setting in the ppmsConfig.ps1 	file to match the facility and instrument name in ppms
+
+Download Instructions:
+	Sign in to Github, and download the “pcConfig” code repository as a .zip file
+	Rename the downloaded folder from “pcConfig-main” to “pcConfig”
+	
+Installation instructions:
+	Log in to the Microscope PC or VM as a local administrator
+	If this is a new PC/VM install, copy the downloaded “pcConfig” folder to a location such as “C:\ “ or “C:Windows\” (Preferred)
+	
+	Note:  On a new PC/VM with windows 10 or later you wont need to install .dotNet etc in the later steps, but if you're running Windows 7 you may need to manually first install the correct versions of:
+	dotNet, WMF etc which are included in each scripts sub-folders listed below as required. 
+
+	In each of the following steps, you may see a popup window to run as administrator, click Yes to install the components and the script will run
+	You may also see a prompt in this window which you need to answer 'A' = Yes to All (necessary for correct operation of the scripts) or if this isnt available 'Y' = Yes
+
+	To Install all of the scripts automatically:
+		If this is a new facility install
+			Edit the parameters in the "config.ps1" or "settings.ps1" file in each script sub-folder first
+		Ensure there is a suitable desktop wallpaper file in the "2_wallpapers" sub-folder
+		Double click the runMe_InstallAllScripts.vbs file
+		Click Yes to run the script as adminstrator if required
+		You may be asked to locate a suitable wallpaper image file (5k 16:9 .jpg or .jpeg) in the "2_wallpapers" sub-folder
+		Close the window when the script ends
+
+	Alternatively:
+	Manually install or configure the scripts for a new facility before running the auto-installer:
+		Configure the PC:
+			Open the "1_pcConfig" folder
+				Double click on "runMe.vbs" to configure the PC
+				If asked, Click “R” for “Run Once”
+				Click Yes to run the script as administrator
+				Type Y when prompted.
+				The script will now install the required powershell modules and components and configure the PC which may take a few minutes, these steps include:
+					Disables Fast User Switching
+					Disables Screensaver password
+					Disables Lock screen
+					Configures folder permissions
+					Creates a c:\logs folder
+					Creates a logoff icon on the desktop
+				Note don’t touch the configurePC.ps1 file unless you know what you’re doing.
+
+			Now Install the scheduled scripts such as ppmsConfig etc:
+	
+		Install the Scheduled Scripts:
+			Open the "2_scheduledScripts" folder 
+				Important: First, open "1_ppmsConfig" folder
+					The "ppmsConfig.ps1" script is used to configure the system for the PPMS server, so will require editing when installing the script for equipment in a different facility
+					By default you shouldnt need to edit any of the default script settings, but if you wish to, then right click on the "ppmsConfig.ps1" file to open in powershell_ISE,
+					Each setting is commented to explain its functionality
+					Edit as required, then save and close the file
+					Double click "runMe.vbs" to install the required "task scheduler" task, registry keys and powershell modules etc
+					Click Yes to run the script as administrator
+					Type A when prompted to apply the script to all users.
+					The script will now connect to the ppms server and generate the system and user details then close automatically
+
+			Open the “2_wallpaper” folder
+				Requires: A suitable wallpaper image (.jpg or .jpeg) in 5k 16:9 format located in the "2_wallpaper" sub-folder
+					If a wallpaper image doesnt exist, create a new wallpaper (5k 16:9 format, .jpg or .jpeg) and place it in the "2_wallpaper" folder
+				Double click "runMe.vbs" to install the wallpaper for all users task
+				The script will auto-detect a wallpaper image that matches the computer name (in this or the wallpaper sub-folder), if one isnt found, then a file browser window will appear to enable you to manually select a suitable image.
+				
+			
+			Repeat for all of the other scripts in their sub-folders, ie: "logoffScript, validateUser" etc.
+				Most scripts will have a "config.ps1" or "settings.ps1" file for settings unique to that script, which can be edited as required
+				If you're running Windows7 this is where you may need to install additional .dotNet and WMF modules etc as required.
+				The scripts will close automatically when completed
+	
+	Logging:
+		Each script will have logging settings that you may enable/disable in their "config.ps1" file
+		By default the generated logfiles are saved to "c:\scriptLogs"
+
+	Other Scripts:	
+		Install any other required scripts in the “pcConfig” directory specific to that system
+
+Logoff and login as a regular user to confirm the scripts are performing as expected
+
+To Uninstall/Disable the scripts:
+	Open Task Scheduler and find the Microscopy folder which contains the tasks for each script
+	Disable/Delete the scripts as required
+	User settings are stored in the registry and by default will be located in "CurrentUser\Software\Microscopy" and "LocalMachine\Software\Microscopy"
+
+

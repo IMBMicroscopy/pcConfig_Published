@@ -1,0 +1,8 @@
+wallpaper script
+
+First: Ensure there is a suitable wallpaper image ideally matching or partially matching the name of the PC (5k 16:9 format, .jpg or .jpeg) and place it in the "2_wallpaper/wallpapers" sub-folder
+Double click "runMe.vbs" to install the wallpaper for all users task
+The script will auto-detect a wallpaper image that matches the computer name (in this or the wallpaper sub-folder), if one isnt found, then a filebrowser window will appear to enable you to manually select a suitable image.
+You can also configure manually the settings.ps1 file to use a specific image for all systems
+
+To uninstall, Right click and open/run the uninstall script

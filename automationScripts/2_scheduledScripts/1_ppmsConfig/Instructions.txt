@@ -1,0 +1,20 @@
+ppmsConfig script
+
+The first part of this script allows admins to configure the script to get system and user details from PPMS server and save them to registry
+The second part is used to configure how the logoffscript behaves
+Generally once these settings are configured for a facility, they dont require further modification per system
+you may make backups of different configurations you need for Confocals, regular microscopes, Analysis Servers etc, store them in a sub-folder and copy them into the ppmsConfig folder as required.
+
+Descriptions of each parameter are contained in the ppmsConfig.ps1 script
+
+The "settings" script is used to configure the system for the PPMS server, so will require editing when installing the script for equipment in a different facility
+	By default you shouldnt need to edit any of the default script settings, but if you wish to, then right click on the "settings" file to open in powershell_ISE,
+	Each setting is commented to explain its functionality
+	Edit as required, then save and close the file
+	Double click "runMe.vbs" to install the required "task scheduler" task, registry keys and powershell modules etc
+	Click Yes to run the script as administrator
+	Type A when prompted to apply the script to all users.
+	The script will now connect to the ppms server and generate the system and user details then close automatically
+
+
+To uninstall, Right click and open/run the uninstall script

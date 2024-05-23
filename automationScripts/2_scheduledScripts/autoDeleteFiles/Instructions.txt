@@ -1,0 +1,31 @@
+autoDeleteFiles script
+
+A Script to autoDelete files once a threshold (lowTide) of free space has been exceeded
+
+The script will start with the oldest files and progressively delete newer files until the required free HDD space (highTide) is achieved
+
+At each defined file age criterion, the script will delete the largest files first, check the HDD space, and repeat for smaller and smaller files until the HDD free space meets the % free space required
+
+If the free HDD space is not met on the first age criterion, the script will move to the next age criterion and repeat
+
+The script will work it's way through the age and size criteria until it either frees up enough HDD space (highTide), or it exhausts the criteria, then the script will end
+
+A Logfile may be generated in the chosen location to report actions
+
+Installation requirements:
+    Win7 will require .NET 4.5 or higher and then WPF5.1 to be installed first, these should be included in the installation folder, or download them from the links below: 
+    	https://www.microsoft.com/en-au/download/details.aspx?id=30653
+    	https://www.microsoft.com/en-us/download/details.aspx?id=54616
+
+The script can scan multiple root folders per drive
+    Open and run "freeHDD.ps1" in Powershell_ISE to determine the current free space on each drive selected to assist in setting up the "Config.ps1" file parameters
+    Open "Config.ps1" in PowerShell_ISE and configure the script parameters as required then save
+	Parameters include:
+		high and low tides for each drive to scan
+		types of files to delete or exclude
+		folders to scan for deletion or to exclude from the scan
+		slack and email settings
+		
+
+
+To uninstall, Right click and open/run the uninstall script

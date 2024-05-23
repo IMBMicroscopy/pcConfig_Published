@@ -1,0 +1,17 @@
+googleSoftwareTracker script
+
+Script to track software used and report to a google sheet as configured in "googleSoftware_settings.ps1"
+The list of software is stored on a website table as defined in "googleSoftware_settings.ps1"
+Can also report user logins to ppms server as configured in "1_ppmsConfig\ppmsConfig.ps1"
+Edit these two configuration scripts as required when installing in a new facility
+
+Requires: ".p12" certificate from google sheets as per instructions "Modify Google Sheets Using PowerShell.pdf"
+Double click on "runMe.vbs" to configure the PC
+	Click Yes to run the script as administrator
+	Type A or Y when prompted.
+	The script will now install the required powershell modules and components and configure the PC which may take a few minutes, then the script will close.
+
+The URL to the Google sheet used for reporting usage will be shown in "c:\logs\googlesoftwareTracker.txt"
+
+
+To uninstall, Right click and open/run the uninstall script
