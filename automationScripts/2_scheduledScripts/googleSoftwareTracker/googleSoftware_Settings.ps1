@@ -40,18 +40,18 @@ $maxDelay = 2000                                                          #rando
 $reportToPPMS = 1                                                         #report user session to PPMS
 ######################################################
 #software list location
-$softwareURL = ""                                                         #URL that contains software table
-$softwareTableName = ""                                                   #Table to query for software processes, IDs and Codes
+$softwareURL = "https://imb.uq.edu.au/research/facilities/microscopy/questionnaires"
+$softwareTableName = "Software Tracker"                                   #Table to query for software processes, IDs and Codes
 ######################################################
 #Spreadsheet Details
-$sheetTitle = ''                                                          #name of google spreadsheet
-$userAccount = ""                                                         #google user account with read/write permissions
+$sheetTitle = 'IMB Microscopy Facility Usage'                             #name of google spreadsheet
+$userAccount = "microscopes@imb.uq.edu.au"                                #google user account with read/write permissions
 $maxCells = 9998000                                                       #create a new spreadsheet when the number of cells reaches this number (google sheet limit is 10mil cells)
 ######################################################
 # Google API Authozation
-$googleScope = ""                                                         #URL for google sheets APIs
-$iss = ''                                                                 #google service account
-$certPswd = ''                                                            #password for service account
+$googleScope = "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file"
+$iss = 'microscopy-service@equipment-logging.iam.gserviceaccount.com'
+$certPswd = 'notasecret'
 ######################################################
 #logging
 $logRoot = "C:\scriptLogs"                                               #root path to store log files
@@ -59,14 +59,15 @@ $logToFile = 1                                                            #enabl
 $logToConsole = 1                                                         #enable/disable (1/0) logging to console
 ######################################################
 #settings URL for global flag location
-$getSettingsFromURLFlag = 0                                              #Enable/Disable Query URL table for global script settings
-$settingsURL = ""                                                        #URL for script settings
-$settingsTableName = ""                                                  #Table to query for global enable/disable flags
-$fallbackFlag = $true                                                    #If website or setting isnt found, fallback to these values
+$getSettingsFromURLFlag = 1                                              #Enable/Disable Query URL table for global script settings
+$settingsURL = "https://imb.uq.edu.au/research/research-facilities/microscopy/script-settings" #URL for script settings
+$settingsTableName = "Global Script Settings"                            #Table to query for global enable/disable flags
+$fallbackFlag = $true                                                   #If website or setting isnt found, fallback to these values
 ######################################################
 #registry path
 $softwareRegPath = "HKCU:\Software\Microscopy\softwareTracker"            #path to save registry files for use by googlesoftwaretracker.ps1
 $ppmsRegPath = "HKCU:\Software\Microscopy\ppmsScript"                     #path to load registry files from ppmsConfig.ps1
+$LMRegPath = "HKLM:\Software\Microscopy\PPMSscript"                       #local machine reg path
 $LM_rootPath = "HKLM:\Software\Microscopy"                               #local machine reg path for shared settings
 ######################################################
 $taskname = "softwareTracker"                                             #name of task to create

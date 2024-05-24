@@ -610,6 +610,13 @@ $calcIdleTime = {
 }
 
 $sessionStats = {
+
+    #get PC details
+    try{
+        $IP_Address = Get-ItemPropertyValue -Path $LMRegPath -name ipAddress -ErrorAction SilentlyContinue
+        $MAC_Address = Get-ItemPropertyValue -Path $LMRegPath -name macAddress -ErrorAction SilentlyContinue
+    }catch{logdata "couldnt get pc details from registry"}
+
     #other stats
     $sessionType = [string]($activeUser.SESSIONNAME)
     $RDP_DisconnectTime = $activeUser.RDP_disconnectTime #get session disconnect time
@@ -813,7 +820,7 @@ $configureSheet = {
         # Create sheet headers
         $headersList = New-Object System.Collections.ArrayList($null)
         #Define Column Headers of Spreadsheet
-        $headers = @("PC_GUID", "System", "bookedUser", "pcUser", "userID", "fullName", "Group", "Affiliation", "External", "logonDateTime", "lastDateTime", "Session_Duration","local_ConnectionTime", "RDP_ConnectionTime", "total_ConnectionTime", "total_UserIdleTime", "total_RDP_DisconnectTime", "totalRAM", "RAM25", "RAM50", "RAM75", "RAM100", "-") #column headers for tracker data
+        $headers = @("PC_GUID", "System", "pcName", "IP_Address", "MAC_Address", "bookedUser", "pcUser", "userID", "fullName", "Group", "Affiliation", "External", "logonDateTime", "lastDateTime", "Session_Duration","local_ConnectionTime", "RDP_ConnectionTime", "total_ConnectionTime", "total_UserIdleTime", "total_RDP_DisconnectTime", "totalRAM", "RAM25", "RAM50", "RAM75", "RAM100", "-") #column headers for tracker data
         $headers = $headers + $softwareArray
         $headersString = $headers -join "`t"
         $headersList.Add($headers) | Out-Null
@@ -1258,10 +1265,11 @@ $trackingScript = {
 
                 
                     #creata data array to write to spreadsheet
+                    $pcName = $env:computerName
                     $headersString = (Get-ItemPropertyValue -Path $softwareRegPath -name headersString -ErrorAction SilentlyContinue)
                     $headers = $headersString.split("`t")
                     $dataList = New-Object System.Collections.ArrayList($null)
-                    $fixedData = @("$GUID", "$system", "$bookedUser", "$userName", "$userID", "$fullName", "$group", "$affiliation", "$external", "$lastConfigDateTimeToPrintString", "$lastDateTimeToPrintString", "$totalSessionTime", "$localSession", "$remoteSession", "$activeSessionTime", "$totalIdleMins", "$RDP_DisconnectTime", $totalRAM, "$RAM25", "$RAM50", "$RAM75", "$RAM100", "-") #tracker data to write to sheet
+                    $fixedData = @("$GUID", "$system", "$pcName", "$IP_Address", "$MAC_Address", "$bookedUser", "$userName", "$userID", "$fullName", "$group", "$affiliation", "$external", "$lastConfigDateTimeToPrintString", "$lastDateTimeToPrintString", "$totalSessionTime", "$localSession", "$remoteSession", "$activeSessionTime", "$totalIdleMins", "$RDP_DisconnectTime", $totalRAM, "$RAM25", "$RAM50", "$RAM75", "$RAM100", "-") #tracker data to write to sheet
                     $data = New-Object string[] $($headers.Count - $fixedData.Count)
                     $data = $fixedData + $data
                     logdata "headers count = $($headers.count)"
