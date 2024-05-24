@@ -844,6 +844,7 @@ $configureSheet = {
     }
 
     . $getAccessToken #get access token from google sheets
+    start-sleep -Seconds 1
 
     #if you have permission, then proceed
     if(![string]::IsNullOrEmpty($accessToken)){
@@ -1209,10 +1210,11 @@ $trackingScript = {
 
             #################################################################
             logdata "`r`n---------------Software Tracker---------------"
+            
+            if([string]::IsNullOrEmpty($accessToken)){. $getAccessToken }#get access token from google sheets
+            start-sleep -Seconds 1
 
-            if($accessToken -ne $null){. $getAccessToken }#get access token from google sheets
-
-            if($accessToken -ne $null ){
+            if(![string]::IsNullOrEmpty($accessToken)){
                 $breakCodeflag = $false
                 #read registry values
                 try{
