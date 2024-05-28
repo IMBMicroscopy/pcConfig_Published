@@ -741,14 +741,26 @@ $ppmsDetails = {
     New-ItemProperty -Path $ppmsRegPath -name autoDeleteFiles_ConfigFlag -Value "true" -Force | Out-Null 
     New-ItemProperty -Path $ppmsRegPath -name validateUser_ConfigFlag -Value "true" -Force | Out-Null 
 
-    $activeNetwork = (Get-NetIPConfiguration |
-        Where-Object {
-        $_.IPv4DefaultGateway -ne $null -and 
-        $_.NetAdapter.status -ne 'Disconnected'
-        }
-    )
-    $IpAddress = $activeNetwork.IPv4Address.IPAddress
-    $macAddress = $activeNetwork.NetAdapter.MacAddress
+    #get network details
+    Try{($OSversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name ProductName -ErrorAction Stop).ProductName}
+    Catch{$OSversion = ""}
+    $OSversion
+
+    $networkDetails = $ipAddress = $macAddress = ""
+    if($OSversion -match "Windows 7"){
+        $activeNetwork = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter 'IPenabled=true'
+        $ipAddress = $activeNetwork.IPAddress[0]
+        $macAddress = $activeNetwork.IPAddress[1]
+    }else{
+        $activeNetwork = (Get-NetIPConfiguration |
+            Where-Object {
+                $_.IPv4DefaultGateway -ne $null -and 
+                $_.NetAdapter.status -ne 'Disconnected'
+            }
+        )
+        $IpAddress = $activeNetwork.IPv4Address.IPAddress
+        $macAddress = $activeNetwork.NetAdapter.MacAddress
+    }
     New-ItemProperty -Path $LMRegPath -name ipAddress -Value $IpAddress -Force | Out-Null
     New-ItemProperty -Path $LMRegPath -name macAddress -Value $macAddress -Force | Out-Null
 }
