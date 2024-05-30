@@ -739,24 +739,37 @@ $sessionStats = {
 $configureSheet = {
     logdata "`r`n-------------------Google Sheets Configurator-------------------------"
     
+    #load UMN-Google module
     try{
         $loadModule = (Get-Module -ListAvailable | Where-Object{$_.Name -like '*UMN-Google*'})
-        Import-Module -Name UMN-Google
-        logdata "UMN-Google Module found on PC and loaded"
+        if($loadModule.Name -match "UMN-Google"){
+            Import-Module -Name umn-google -Force  -ErrorAction stop
+            logdata "UMN-Google Module found on PC and loaded"
+            $failedModuleFlag = $false
+
+        }else{
+            logdata "UMN-Google Module not found on PC"
+            $failedModuleFlag = $true
+        }
     }
     catch{
         logdata "couldnt find UMN-Google Module on PC"
-            
-    #install google module if required, must be run as admin on first use to install the module
-    #try{$moduleInstalled = (Get-InstalledModule -Name UMN-Google -ErrorAction stop).Name}catch{$moduleInstalled = ""}
-    #if($moduleInstalled -match "UMN-Google"){logdata "umn-google module already installed"}
-    #else{
-        try{
-            logdata "install umn-google module"
-            Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-            Install-Module -name umn-google -Scope AllUsers -Confirm:$False -Force | Out-Null
-            Import-Module -Name UMN-Google
-        }catch{logdata "unable to install umn-google module"}
+        $failedModuleFlag = $true
+    }
+    
+    if($failedModuleFlag -eq $true){
+        #install google module if required, must be run as admin on first use to install the module
+        try{$moduleInstalled = (Get-InstalledModule -Name UMN-Google -ErrorAction stop).Name}catch{$moduleInstalled = ""}
+        if($moduleInstalled -match "UMN-Google"){logdata "umn-google module already installed"}
+        else{
+            try{
+                logdata "try to install umn-google module"
+                Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted -ErrorAction stop
+                Install-Module -name umn-google -Scope AllUsers -Confirm:$False -SkipPublisherCheck -Force -ErrorAction stop | Out-Null
+                Import-Module -Name UMN-Google -Force -ErrorAction stop
+                logdata "UMN-google module installed and imported"
+            }catch{logdata "unable to install umn-google module"}
+        }
     }
 
     #generate values

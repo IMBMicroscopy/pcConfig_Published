@@ -575,7 +575,6 @@ $getPPMSInstrument = {
                         $systemName = $system.system
                         $ppmsID = $system.id
                         $ppmsCode = $system.code
-                        logdata "after autoPC: ppmsPF = $ppmsPF or $pf"
                     }
                 }
             }
@@ -593,7 +592,6 @@ $getPPMSInstrument = {
                             $systemName = $(([string]$pcDescription).trim())
                             $ppmsID = $system.id
                             $ppmsCode = $system.code
-                            logdata "after pc description: ppmsPF = $ppmsPF or $pf"
                         }
                     }
                 }
@@ -635,10 +633,10 @@ $getPPMSInstrument = {
             .$userSelectType 
             $selectedInstrument = $systems | Where-Object{$_.System -eq $selectedName}
             if(![string]::IsNullOrEmpty($selectedInstrument.system)){
-                $systemName = $selectedInstrument.system + "_" + $additionalText
+                if(![string]::IsNullOrEmpty($additionalText)){$systemName = $selectedInstrument.system + "_" + $additionalText}
+                else{$systemName = $selectedInstrument.system}
                 $ppmsID = $selectedInstrument.id
                 $ppmsCode = $selectedInstrument.code
-                logdata "after user selection: ppmsPF = $ppmsPF or $pf"
                 $manualConfigFlag = $true
             }
         }
@@ -798,13 +796,17 @@ $ppmsDetails = {
     #get network details
     Try{($OSversion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name ProductName -ErrorAction Stop).ProductName}
     Catch{$OSversion = ""}
-    $OSversion
 
     $networkDetails = $ipAddress = $macAddress = ""
     if($OSversion -match "Windows 7"){
-        $activeNetwork = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter 'IPenabled=true'
-        $ipAddress = $activeNetwork.IPAddress[0]
-        $macAddress = $activeNetwork.IPAddress[1]
+        $activeNetwork = Get-WmiObject win32_networkadapterconfiguration | 
+            Select-Object -Property @{
+                Name = 'IPAddress'
+                Expression = {($PSItem.IPAddress[0])}
+            },MacAddress | Where IPAddress -NE $null
+
+            $ipAddress = $activeNetwork.IPAddress
+            $macAddress = $activeNetwork.MacAddress
     }else{
         $activeNetwork = (Get-NetIPConfiguration |
             Where-Object {
@@ -817,6 +819,7 @@ $ppmsDetails = {
     }
     New-ItemProperty -Path $LMRegPath -name ipAddress -Value $IpAddress -Force | Out-Null
     New-ItemProperty -Path $LMRegPath -name macAddress -Value $macAddress -Force | Out-Null
+    logdata "Active Network: IPAddress = $IpAddress, macAddress = $macAddress"
 }
 
 $logoffDetails = {
