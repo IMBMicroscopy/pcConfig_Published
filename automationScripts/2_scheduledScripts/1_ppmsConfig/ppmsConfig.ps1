@@ -1,7 +1,7 @@
 ﻿#ppmsConfig script
 #Script to get/set ppms details of the PC for use by other scripts 
 
-#check system name against PPMS, if it fails, ask user to select from list, if that fails, fall back to local system name, no need for manual definition.
+#check system name against PPMS, if it fails, ask user to select from list (user can also add additional extra details), if that fails, fall back to local system name, no need for manual definition.
 #save these values to LMregpath and set user permissions so they're readable by all users
 #on each login of user, copy LMRegpath to ppmsRegPath
 #to reset system details, login as admin and delete task scheduler task, then run this script again.
@@ -465,11 +465,11 @@ $userSelectType = {
 
     $form = New-Object System.Windows.Forms.Form
     $form.Text = 'Select a PPMS Instrument'
-    $form.Size = New-Object System.Drawing.Size(350,300)
+    $form.Size = New-Object System.Drawing.Size(350,340)
     $form.StartPosition = 'CenterScreen'
 
     $okButton = New-Object System.Windows.Forms.Button
-    $okButton.Location = New-Object System.Drawing.Point(75,220)
+    $okButton.Location = New-Object System.Drawing.Point(75,260)
     $okButton.Size = New-Object System.Drawing.Size(75,23)
     $okButton.Text = 'OK'
     $okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
@@ -477,7 +477,7 @@ $userSelectType = {
     $form.Controls.Add($okButton)
 
     $cancelButton = New-Object System.Windows.Forms.Button
-    $cancelButton.Location = New-Object System.Drawing.Point(150,220)
+    $cancelButton.Location = New-Object System.Drawing.Point(150,260)
     $cancelButton.Size = New-Object System.Drawing.Size(75,23)
     $cancelButton.Text = 'Cancel'
     $cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
@@ -495,6 +495,18 @@ $userSelectType = {
     $listBox.Size = New-Object System.Drawing.Size(260,20)
     $listBox.Height = 150
 
+    $label2 = New-Object System.Windows.Forms.Label
+    $label2.Location = New-Object System.Drawing.Point(10,200)
+    $label2.Size = New-Object System.Drawing.Size(280,20)
+    $label2.Text = 'Additional Instrument Details '
+    $form.Controls.Add($label2)
+
+    $textBox = New-Object System.Windows.Forms.TextBox
+    $textBox.Location = New-Object System.Drawing.Point(10,220)
+    $textBox.Size = New-Object System.Drawing.Size(260,20)
+    $textBox.Height = 150
+    $form.Controls.Add($textBox)
+
     [void] $listBox.Items.AddRange($($systems.system | sort))
     [System.Media.SystemSounds]::Asterisk.Play()
 
@@ -505,8 +517,9 @@ $userSelectType = {
     if ($result -eq [System.Windows.Forms.DialogResult]::OK)
     {
         $selectedName = $listBox.SelectedItem
+        $additionalText = $textBox.Text
     }else{
-        $selectedName = ""
+        $selectedName = $additionalText = ""
         logdata "user cancelled instrument selection"
     }
     logdata "user selected instrument = $selectedName"
@@ -518,11 +531,12 @@ $getPPMSInstrument = {
     if($autoDetect = 1){ $autoPCname = $env:COMPUTERNAME -replace($ignore,"")} #get local PC name and remove any prefix as defined in settings
 
     #has the system been manually configured before (ie: PC name doesnt exist in PPMS?)
-    try{$manualConfigFlag = Get-ItemPropertyValue -Path $LMRegPath -name manualConfig -ErrorAction SilentlyContinue}
-    catch{$manualConfigFlag = 0}
+    try{$manualConfigFlag = Get-ItemPropertyValue -Path $LMRegPath -name manualConfig -ErrorAction stop}
+    catch{$manualConfigFlag = $false}
+    logdata "manualConfigFlag = $manualConfigFlag"
 
     #if the system has been manually configured before
-    if($manualConfigFlag -eq 1){
+    if($manualConfigFlag -eq $true){
         #get ppms system details from registry
         try{
             logdata "get system details from $LMRegPath"
@@ -533,32 +547,56 @@ $getPPMSInstrument = {
         }
         catch{
             logdata "system detail fields not found in $LMRegPath"
-            $SystemName = $ppmsID = $ppmsCode = $ppmsPF = ""
+            $SystemName = $ppmsID = $ppmsCode = ""
         }
     }
     else{
          #get ppms instrument details using autoPCname, if valid use them,
-         Write-Host "getPPMSinstrument - ppmsPF = $ppmsPF"
+         Logdata "getPPMSinstrument - ppmsPF = $ppmsPF"
         if(testURL $ppmsURL){
             try{
-                logdata "retrieve system details from ppms"
+                logdata "retrieve all systems details from ppms"
                 $body = "action=Report$systemReport&outformat=json&apikey=$apikey&coreid=$ppmsPF" 
                 $systems = Invoke-RestMethod -TimeoutSec $ppmsTimeout -uri $ppmsURL/API2/ -Method 'POST' -Body $body
                 $systems = $systems | Where-Object Active -eq True
                 $ppmsExists = $true
+            }catch{
+                logdata "couldnt retrieve all systems details from ppms"
+                $ppmsExists = $false
+            }
 
+            if($ppmsExists -eq $true){
                 #test using autodetected pc name
                 logdata "compare PPMS list of instruments against $autoPCname"
+                $SystemName = $ppmsID = $ppmsCode = ""
+
                 foreach($system in $systems){
                     if ($system.system -match  $(([string]$autoPCname).trim())){
                         $systemName = $system.system
                         $ppmsID = $system.id
                         $ppmsCode = $system.code
+                        logdata "after autoPC: ppmsPF = $ppmsPF or $pf"
                     }
                 }
-            }catch{
-                logdata "couldnt retrieve system details from ppms"
-                $ppmsExists = $false
+            }
+
+            #if pcName fails to match try against pc description
+            if(($ppmsExists -eq $true) -and ([string]::IsNullOrEmpty($systemName))){
+                try{
+                    $pcDescription = Get-itempropertyvalue -Path HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters -Name srvcomment -ErrorAction Stop
+                    logdata "pcDescription = $pcDescription"
+                }catch{logdata "couldnt get pc description"}
+
+                if(![string]::IsNullOrEmpty($pcDescription)){
+                    foreach($system in $systems){
+                        if ($(([string]$pcDescription).trim()) -match $system.system){
+                            $systemName = $(([string]$pcDescription).trim())
+                            $ppmsID = $system.id
+                            $ppmsCode = $system.code
+                            logdata "after pc description: ppmsPF = $ppmsPF or $pf"
+                        }
+                    }
+                }
             }
         }else{
             logdata "ppms appears to be down"
@@ -574,8 +612,10 @@ $getPPMSInstrument = {
                 try{$SystemName = (Get-ItemPropertyValue -Path $LMRegPath -name systemName -ErrorAction Stop)}
                 catch{logdata "couldnt get systemName from $LMRegPath"}
                 
-                try{$ppmsPF = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsPF -ErrorAction Stop)}
-                catch{logdata "couldnt get ppmsPF from $LMRegPath"}
+                if([string]::IsNullOrEmpty($ppmsPF)){
+                    try{$ppmsPF = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsPF -ErrorAction Stop)}
+                    catch{logdata "couldnt get ppmsPF from $LMRegPath"}
+                }
 
                 try{$ppmsID = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsID -ErrorAction Stop)}
                 catch{logdata "couldnt get ppmsID from $LMRegPath"}
@@ -595,15 +635,17 @@ $getPPMSInstrument = {
             .$userSelectType 
             $selectedInstrument = $systems | Where-Object{$_.System -eq $selectedName}
             if(![string]::IsNullOrEmpty($selectedInstrument.system)){
-                $systemName = $selectedInstrument.system
+                $systemName = $selectedInstrument.system + "_" + $additionalText
                 $ppmsID = $selectedInstrument.id
                 $ppmsCode = $selectedInstrument.code
+                logdata "after user selection: ppmsPF = $ppmsPF or $pf"
+                $manualConfigFlag = $true
             }
         }
 
         if([string]::IsNullOrEmpty($ppmsCode)){
             $systemName = $env:computername
-            $manualConfigFlag = 1
+            $manualConfigFlag = $true
             logdata "ppmsCode is empty, revert to using local system name $env:computername"
         }
     }
@@ -612,6 +654,19 @@ $getPPMSInstrument = {
     logdata "ppms PF = $ppmsPF"
     logdata "ppms ID = $ppmsID"
     logdata "ppms Code = $ppmsCode"
+
+    #update pc description if required
+    if($ranAsAdminFlag -eq $true){ 
+        try{
+            $pcDescription = Get-itempropertyvalue -Path HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters -Name srvcomment -ErrorAction Stop
+            logdata "pcDescription = $pcDescription"
+        }catch{logdata "couldnt get pc description"}
+
+        if([string]::IsNullOrEmpty($pcDescription)){
+            New-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters -Name srvcomment -Value $systemName -Force | Out-Null
+            logdata "wrote $systemName to pcDescription"
+        }
+    }
 }
 
 $getConfigDateTime = {
@@ -638,8 +693,7 @@ $getPPMSUserDetails = {
         affiliation = ""
         active = ""
     }
-
-    if($ppmsExists){
+    if(testURL $ppmsURL){
         Try{
             #get ppms values
             logdata "getting user details from ppms"
@@ -729,7 +783,7 @@ $ppmsDetails = {
     New-ItemProperty -Path $LMRegPath -name ppmsPF -Value $([string]$ppmsPF) -Force | Out-Null
     New-ItemProperty -Path $LMRegPath -name ppmsID -Value $([string]$ppmsID) -Force | Out-Null
     New-ItemProperty -Path $LMRegPath -name ppmsCode -Value $([string]$ppmsCode) -Force | Out-Null
-    if($manualConfigFlag -eq 1){New-ItemProperty -Path $LMRegPath -name manualConfig -Value 1 -Force | Out-Null}
+    if($manualConfigFlag -eq $true){New-ItemProperty -Path $LMRegPath -name manualConfig -Value $true -Force | Out-Null}
 
 
     #reset counters
