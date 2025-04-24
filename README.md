@@ -4,6 +4,7 @@
 ## Tools include:
 
 ### pcConfig
+    Backend script
     autoconfigure the PC for laboratory use
     disable: screensaver, user switching, lock PC and other common settings 
     set permissions for the automation script operation and deployment
@@ -12,27 +13,36 @@
 
 ### ppmsConfig
     Requires the Stratocore PPMS booking platform
+    Backend script
     Autodetection and installation of PPMS system parameters based on PC name (with manual override)
     Configuration settings for subsequent scripts
 <br>![Script Settings](https://github.com/user-attachments/assets/dd53e04f-78c2-49e8-bef5-a3540c9901f6)<br>
 
     
 ### wallpaper
-    Install custom desktop wallpaper
+    Can utilise Statocore PPMS booking platform for system name/type
+    Backend script
+    Install custom desktop wallpaper for all users
     Automatic installation of custom desktop wallpapers based on instrument name/type
+<br>![Wallpaper](https://github.com/user-attachments/assets/76fbe44c-b4e6-4ce3-a1f5-5b9bdc82356a)<br>
+
 
 ### announcement
     Facility announcements and questionaires
+    Front end script
     Create customised one-off, repeating, random announcements from a webpage and display on instrument pcs
 <br>![Announcements](https://github.com/user-attachments/assets/88981e1d-56eb-46ff-96b8-df5022d8a73a)<br>
 <br>![Questionaire](https://github.com/user-attachments/assets/a1eb55a9-185c-46f7-bbaa-f683b6f86de9)<br>
 
 
 ### autoDeleteFiles
+    Back end script
     Configurable Autodeletion of files by location, age and filetype to manage multiple HDD space
     reporting to admin via email/slack/teams when storage cant be cleared
-    
+<br>![Teams warning](https://github.com/user-attachments/assets/2afc4d46-03d6-4d45-97fb-079be43977ae)<br>
+
 ### controlPanel
+    Front end script
     Requires the Stratocore PPMS booking platform
     PPMS control panel (report incidents, quick book, current and next session info, email alerts etc)
   ![Control Panel](https://github.com/user-attachments/assets/940d0543-16a2-4c9b-8b54-1d9de19642f1)
@@ -41,6 +51,7 @@
 
     
 ### googleSoftwareTracker
+    Backend Script
     Track and report multiple simultaneous software use to google sheets
     Track remote vs local logins
     Gather PC hardware configuration and usage stats
@@ -50,6 +61,7 @@
 
 
 ### logoffScript
+    Front end script
     Requires the Stratocore PPMS booking platform
     Logoff user automatically based on configurable logoff parameters 
     Allow pre- and post booking usage
@@ -68,14 +80,17 @@
   <br>
 
 ### ppmsTracker
+    Back end script
     Requires the Stratocore PPMS booking platform
     Track and report user login to PPMS
     
 ### validateUser
+    Front end script
     Requires the Stratocore PPMS booking platform
     Validate user at logon
     confirms the user is active and exists in PPMS, else notifies them and logoffs off
     reports denied access to admin email/slack/teams
+<br>![Validate user](https://github.com/user-attachments/assets/f6df3b15-2afe-4670-b119-51ab65e09977)<br>
 
       
 ## The scripts require the following:
