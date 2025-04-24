@@ -22,6 +22,7 @@ This has saved us tremedously in installation and configuration time on our micr
     Backend script
     Autodetection and installation of PPMS system parameters based on PC name (with manual override)
     Configuration settings for subsequent scripts
+    webpage based script enable/disable functionality
 <br>![Script Settings](https://github.com/user-attachments/assets/dd53e04f-78c2-49e8-bef5-a3540c9901f6)<br>
 
     
