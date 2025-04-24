@@ -110,7 +110,7 @@ This has saved us tremedously in installation and configuration time on our micr
 <br>![List of Systems](https://github.com/user-attachments/assets/fcc7ddb6-57d3-4c4b-9195-245f10492445)<br>
 <br>
 
-###Acknowledgements and License
+## Acknowledgements and License
 
 The author wishes to acknowledge the contributions from all of the hardware and software library creators that are featured in this code, without whom this tool would not be possible.
 Please see individual license files of each library for terms and conditions specific to that library.
