@@ -1,7 +1,7 @@
 # pcConfig
 ## Collection of powershell scripts for the automatic configuration, management and control of lab PCs.
 
-Tools include:
+## Tools include:
 
 ### pcConfig
     autoconfigure the PC for laboratory use
@@ -21,7 +21,7 @@ Tools include:
 
 ### announcement
     Facility announcements and questionaires
-    Create customised one-off, repeating, random announcments from a webpage and display on instrument pcs
+    Create customised one-off, repeating, random announcements from a webpage and display on instrument pcs
     
 ### autoDeleteFiles
     Configurable Autodeletion of files by location, age and filetype to manage multiple HDD space
@@ -47,13 +47,15 @@ Tools include:
     Quick extend bookings
     report incidents
     easy logoff buttons with contextual notifications based on system type
-  ![Email Panel](https://github.com/user-attachments/assets/892bb479-363b-4b92-9304-b2d9515c0b0b)
-  
-  ![Incident Panel](https://github.com/user-attachments/assets/49927a43-60b4-44bf-a69c-221a75cf7d68)
-  
+    <br>
   ![logoff Panel](https://github.com/user-attachments/assets/3f09e6ad-bebe-4697-8ff7-b9ac67bf6b9b)
-  
+  <br>
   ![Logoff Panel 2](https://github.com/user-attachments/assets/eb0c0948-4aee-4426-997a-a6ff8a08eb7c)
+  <br>
+  ![Email Panel](https://github.com/user-attachments/assets/892bb479-363b-4b92-9304-b2d9515c0b0b)
+  <br>
+  ![Incident Panel](https://github.com/user-attachments/assets/49927a43-60b4-44bf-a69c-221a75cf7d68)
+  <br>
 
 ### ppmsTracker
     Requires the Stratocore PPMS booking platform
@@ -65,15 +67,14 @@ Tools include:
     confirms the user is active and exists in PPMS, else notifies them and logoffs off
     reports denied access to admin email/slack/teams
 
-    
-   
+      
 ## The scripts require the following:
     Stratocore PPMS booking software, including the following custom reports as used by IMB Microscopy facility (contact Stratocore PPMS to generate these reports for your facility)
     List of systems with ID and tracker code
     Currently running not booked session
     Projects for User
-    
-![Projects for User](https://github.com/user-attachments/assets/3026294e-0ba8-4fb1-af4a-d62220cc9e06)
-![Currently running not booked session](https://github.com/user-attachments/assets/97012fc2-fb31-4c3f-9240-420572b226d0)
-![List of Systems](https://github.com/user-attachments/assets/fcc7ddb6-57d3-4c4b-9195-245f10492445)
+<br>![Projects for User](https://github.com/user-attachments/assets/3026294e-0ba8-4fb1-af4a-d62220cc9e06)<br>
+<br>![Currently running not booked session](https://github.com/user-attachments/assets/97012fc2-fb31-4c3f-9240-420572b226d0)<br>
+<br>![List of Systems](https://github.com/user-attachments/assets/fcc7ddb6-57d3-4c4b-9195-245f10492445)<br>
+<br>
 
