@@ -1,10 +1,10 @@
 # pcConfig
 ## Collection of powershell scripts for the automatic configuration, management and control of lab PCs.
 
-These tools have evolved and been developed independently over many years through our operational needs in our own facility
-Each tool can be installed/used independently of the others in most cases, if they dont require PPMS to operate (indicated below)
-However they can be automatically installed together (after first time configuration for your facility) with a double click on a single script
-This has saved us tremedously in installation and configuration time on our microscope PCs and analysis servers
+These tools have evolved and been developed independently over many years through our operational needs in our own facility<br>
+Each tool can be installed/used independently of the others in most cases, if they dont require PPMS to operate (indicated below)<br>
+However they can be automatically installed together (after first time configuration for your facility) with a double click on a single script<br>
+This has saved us tremedously in installation and configuration time on our microscope PCs and analysis servers<br>
 
 
 ## Tools include:
@@ -62,6 +62,7 @@ This has saved us tremedously in installation and configuration time on our micr
     Track remote vs local logins
     Gather PC hardware configuration and usage stats
     configurable via webpage table
+    import this data into Microsoft PowerBI to generate dashboards
 <br>![Software tracker](https://github.com/user-attachments/assets/6db99d9d-c3c1-4af4-9d91-db1b92206ff5)<br>
 <br>![google sheet](https://github.com/user-attachments/assets/53ebe704-411c-4290-bcad-d0cd6b29d0e2)<br>
 
