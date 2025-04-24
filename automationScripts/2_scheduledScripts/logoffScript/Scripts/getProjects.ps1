@@ -63,7 +63,7 @@ function getProjects{
 
 #getProjects -session 156709 #get the project used for session ID
 #"......."
-#getProjects -login jbloggs #test for user login
+#getProjects -login uqdxia #test for user login
 
 #$list = getProjects -login uqjspri1 #generate a list of projects/bcodes for a user
 #$list.bcode #generates a list of bcodes for the user

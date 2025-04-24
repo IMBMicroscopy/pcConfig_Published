@@ -25,4 +25,4 @@ Function sharedProjects{
     }else{return $false}
 }
 
-#sharedProjects -user1 nick -user2 mary
+#sharedProjects -user1 uqncondo -user2 uqjspri1

@@ -1,6 +1,7 @@
 ppms Control Panel script
 
-Double click on "runMe.vbs" to install the software
+Double click on "runMe.vbs" to configure the PC
+	If asked, Click “R” for “Run Once”
 	Click Yes to run the script as administrator
 	A task scheduler task will be created to run the ppmsCP.exe file at any user logon
 	Settings for ppmsCP can be adjusted in the "ppmsConfig.ps1" script

@@ -7,9 +7,9 @@ $logToFile = 1                                                            #enabl
 $logToConsole = 1                                                         #enable/disable (1/0) logging to console
 ######################################################
 #settings URL for global flag location
-$getSettingsFromURLFlag = 0                                              #Enable/Disable Query URL table for global script settings
-$settingsURL = ""                                                        #URL for script settings
-$settingsTableName = ""                                                  #Table to query for global enable/disable flags
+$getSettingsFromURLFlag = 1                                              #Enable/Disable Query URL table for global script settings
+$settingsURL = ""                                                        #URL for script settings table
+$settingsTableName = "Global Script Settings"                            #Table to query for global enable/disable flags
 $fallbackFlag = $false                                                   #If website or setting isnt found, fallback to these values
 ######################################################
 #Slack particulars
@@ -17,7 +17,7 @@ $SlackFlag = 0                                                           #should
 $uriSlack = ""
 ######################################################
 #send messages to a Teams channel via a webhook
-$TeamsFlag = 1                                                           #should the script send a message to slack?
+$TeamsFlag = 1
 $webHook = ""
 ######################################################
 $ppmsRegPath = "HKCU:\Software\Microscopy\PPMSscript"                     #current user reg path

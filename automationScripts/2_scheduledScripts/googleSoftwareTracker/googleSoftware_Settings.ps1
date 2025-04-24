@@ -37,21 +37,21 @@ $enableSoftwareTracker = 1                                                #enabl
 $sameSessionDelta = 5                                                     #number of minutes between successive logins of the same user to track as the same session
 $maxDelay = 2000                                                          #random delay up to $maxDelay in milliseconds
 ######################################################
-$reportToPPMS = 1                                                         #report user session to PPMS
+$reportToPPMS = 1                                                         #report GUID to PPMS
 ######################################################
 #software list location
-$softwareURL = "https://imb.uq.edu.au/research/facilities/microscopy/questionnaires"
+$softwareURL = ""                                                         #URL for software list table
 $softwareTableName = "Software Tracker"                                   #Table to query for software processes, IDs and Codes
 ######################################################
 #Spreadsheet Details
-$sheetTitle = 'IMB Microscopy Facility Usage'                             #name of google spreadsheet
-$userAccount = "microscopes@imb.uq.edu.au"                                #google user account with read/write permissions
+$sheetTitle = 'Microscopy Facility Usage'                                 #name of google spreadsheet
+$userAccount = ""                                                         #google user account with read/write permissions
 $maxCells = 9998000                                                       #create a new spreadsheet when the number of cells reaches this number (google sheet limit is 10mil cells)
 ######################################################
 # Google API Authozation
 $googleScope = "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file"
-$iss = 'microscopy-service@equipment-logging.iam.gserviceaccount.com'
-$certPswd = 'notasecret'
+$iss = ''
+$certPswd = ''
 ######################################################
 #logging
 $logRoot = "C:\scriptLogs"                                               #root path to store log files
@@ -60,9 +60,9 @@ $logToConsole = 1                                                         #enabl
 ######################################################
 #settings URL for global flag location
 $getSettingsFromURLFlag = 1                                              #Enable/Disable Query URL table for global script settings
-$settingsURL = "https://imb.uq.edu.au/research/research-facilities/microscopy/script-settings" #URL for script settings
+$settingsURL = ""                                                        #URL for script settings table
 $settingsTableName = "Global Script Settings"                            #Table to query for global enable/disable flags
-$fallbackFlag = $true                                                   #If website or setting isnt found, fallback to these values
+$fallbackFlag = $true                                                    #If website or setting isnt found, fallback to these values
 ######################################################
 #registry path
 $softwareRegPath = "HKCU:\Software\Microscopy\softwareTracker"            #path to save registry files for use by googlesoftwaretracker.ps1

@@ -3,17 +3,17 @@
 
 ## System Details  #########################################################################################
 $autoDetect = 1                                                           #If enabled (1) find the name of the local PC and use it to search PPMS for name of instrument, otherwise ask the user to select from a list of ppms instruments
-$ignore = ""                                                              #if the autodetected local PC name includes this string at the start of the name, remove it before searching ppms for the instrument name
+$ignore = "IMB-"                                                          #if the autodetected local PC name includes this string at the start of the name, remove it before searching ppms for the instrument name
 ######################################################
 #PPMS Server details
 $ppmsURL = ""                                                             #PPMS Server URL
-$PF = ""                                                                  #Default PPMS Core ID.  Comment out or leave empty if you want to show a popup to select the Core.  
+$PF = "  "                                                                #Default PPMS Core ID.  Comment out or leave empty if you want to show a popup to select the Core.
 $pumapiKey = ""                                                           #PUMAPI key, must have user management turned on, You will need to create this in PPMS
 $apiKey = ""                                                              #API key, must have write mode turned on, You will need to create this in PPMS
 $ppmsTimeout = 10                                                         #set timeout for ppms communications
-$unbookedLoginReport = ""                                                 #report # to get current unbooked sessions on this system
-$systemReport = ""                                                        #report # to get current list of ppms systems and their ID and Codes
-$projectsForUserReport = ""                                               #Define the report number to retrieve list of projects for user or sessionID
+$unbookedLoginReport = 2093                                               #report # to get current unbooked sessions on this system
+$systemReport = 2092                                                      #report # to get current list of ppms systems and their ID and Codes
+$projectsForUserReport = 2094                                             #Define the report number to retrieve list of projects for user or sessionID
 ######################################################
 #logging
 $logRoot = "C:\scriptLogs"                                                #root path to store log files
@@ -21,9 +21,9 @@ $logToFile = 1                                                            #enabl
 $logToConsole = 1                                                         #enable/disable (1/0) logging to console
 ######################################################
 #settings URL for global flag location
-$getSettingsFromURLFlag = 0                                               #Enable/Disable Query URL table for global script settings
-$settingsURL = "" #URL for script settings
-$settingsTableName = ""                                                   #Table to query for global enable/disable flags
+$getSettingsFromURLFlag = 1                                               #Enable/Disable Query URL table for global script settings
+$settingsURL = ""                                                         #URL for script settings table
+$settingsTableName = "Global Script Settings"                             #Table name to query for global enable/disable flags
 $fallbackFlag = $true                                                     #If website or setting isnt found, fallback to these values
 ######################################################
 $ppmsRegPath = "HKCU:\Software\Microscopy\PPMSscript"                     #current user reg path
@@ -37,7 +37,6 @@ $atLogon = $true                                                          #run t
 $asSystem = $false                                                        #run task as system if true, else run as Users
 $asAdmin = $false                                                         #if $true, run task with highest priveleges but as regular user
 ######################################################
-
 
 
 
@@ -78,22 +77,21 @@ $ignoreUserList = "Training,Workshop"                                    #Dont s
 $browser = "Firefox"
 ######################################################
 #email particulars
-$emailFrom = ''                                                          #Define email account in From address 
+$emailFrom = 'microscopes@imb.uq.edu.au'                                 #Define email account in From address 
 $secureEmailFlag = 1                                                     #Does email server require a username and password?
-$emailUser = ''                                                          #Username for smtp account
-$emailPass = ''                                                          #Password for smtp account
-$smtpClient = ""
+$emailUser = 'uqimbms1'                                                  #Username for smtp account
+$emailPass = 'Bright-Field12'                                            #Password for smtp account
+$smtpClient = "smtp.uq.edu.au"
 ######################################################
 #PPMS Questionaire                                                       #Questionaire appears when users login
 $QuestionFlag = 0                                                        #Questionaire enabled if true
 $QuestionRandom = 1                                                      #Randomise how often the questions are asked if true
 $QuestionOccurence = 2                                                   #Questionaire appears every nth login, If Random is false, If Random is true, a random number between 0 and $QuestionOccurence is generated and compared to Zero.
-$QuestionDrive = ""                                                      #Network Drive to mount for Questionaire
-$QuestionPath = ""                                                       #Path to Questionaire
+$QuestionDrive = "\\Objective.imb.uq.edu.au\Objective"                   #Network Drive to mount for Questionaire
+$QuestionPath = "\Support\Documents\Questionaires\"                      #Path to Questionaire
 ######################################################
 $cpRefresh = 60000                                                       #set refresh rate for control panel in milliseconds
 ######################################################
 $screenWidth  = 500
 $screenHeight = 500
 ######################################################
-

@@ -1,7 +1,7 @@
 ﻿#Configuration settings for wallpaper script
 
 ######################################################
-$wallpaperName = ""                                                       #if not empty, then search and use this image if it exists, else try the PCname, else ask the user for a suitable image.
+$wallpaperName = "ScopePCs"                                               #if not empty, then search and use this image if it exists, else try the PCname, else ask the user for a suitable image.
 $forceStyle = 1                                                           #dont prompt user to choose a wallpaper style if true, ie: fit, fill, stretch etc.
 $wallpaperStyle = 10                                                      #if $forceStyle = true, apply this style and dont show popup to user.
 $wallpaperStyleName = "Fill"                                              #name of wallpaper style to match number
@@ -20,10 +20,10 @@ $logToFile = 1                                                            #enabl
 $logToConsole = 1                                                         #enable/disable (1/0) logging to console
 ######################################################
 #settings URL for global flag location
-$getSettingsFromURLFlag = 1                                               #Enable/Disable Query URL table for global script settings
-$settingsURL = ""                                                         #URL for script settings table
-$settingsTableName = "Global Script Settings"                             #Table to query for global enable/disable flags
-$fallbackFlag = $true                                                     #If website or setting isnt found, fallback to these values
+$getSettingsFromURLFlag = 1                                              #Enable/Disable Query URL table for global script settings
+$settingsURL = ""                                                        #URL for script settings table
+$settingsTableName = "Global Script Settings"                            #Table to query for global enable/disable flags
+$fallbackFlag = $true                                                    #If website or setting isnt found, fallback to these values
 ######################################################
 $ppmsRegPath = "HKCU:\Software\Microscopy\PPMSscript"                     #current user reg path
 $wallpaperRegPath = "HKLM:\Software\Microscopy\wallpaper"                 #script specific reg path

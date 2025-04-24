@@ -5,6 +5,13 @@ Installation requirements:
     Win7 will require .NET 4.5 or higher and then WPF5.1 to be installed first, these should be included in the installation folder, or download them from the links below: 
     	https://www.microsoft.com/en-au/download/details.aspx?id=30653
     	https://www.microsoft.com/en-us/download/details.aspx?id=54616
+
+You must enable Powershell script execution before running this script
+    Press the Windows Start button and type Powershell_ISE, right click and "Run as Administrator"
+    Copy the following line into the console then press Enter (You may choose to use Bypass or per script policies instead of Unrestricted)
+    
+	Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy Unrestricted -Force
+
 #>
 
 
@@ -16,6 +23,7 @@ $lowTideTable = [ordered]@{
     D = 20
     E = 20
     F = 20
+    G = 20
 }
 
 #must be equal to or larger than lowTide
@@ -24,6 +32,7 @@ $highTideTable = [ordered]@{
     D = 75
     E = 75
     F = 75
+    G = 75
 }
 
 #Define the Drive/s and Root folder/s to Scan, #comment out unnecessary drives
@@ -32,6 +41,7 @@ $driveTable = [ordered]@{
     D = @("D:\") #Define the top level folder/s of the defined drive to scan for old files, Add as many comma separated values as required
     E = @("E:\") 
     F = @("F:\") 
+    G = @("G:\")
 }
 
 #define name of drives to ignore (USB security keys typically), exact matches only
@@ -63,13 +73,13 @@ $logtoFile = $true                                                       #enable
 $logToConsole = $true                                                    #enable/disable logging to console
 ######################################################
 #settings URL for global flag location
-$getSettingsFromURLFlag = 0                                              #Enable/Disable Query URL table for global script settings
-$settingsURL = ""                                                        #URL for script settings
-$settingsTableName = ""                                                  #Table to query for global enable/disable flags
+$getSettingsFromURLFlag = 1                                              #Enable/Disable Query URL table for global script settings
+$settingsURL = ""                                                        #URL for script settings table
+$settingsTableName = "Global Script Settings"                            #Table to query for global enable/disable flags
 $fallbackFlag = $false                                                   #If website or setting isnt found, fallback to these values
 ######################################################
 #email particulars
-$emailFlag = 0                                                           #should the script send a message via email?
+$emailFlag = 1                                                           #should the script send a message via email?
 $emailToAdmin = ''                                                       #Define email account to send Incident reports to
 $emailFrom = ''                                                          #Define email account in From address 
 $emailSig = "Kind Regards,`r`n"+"Microscopy`r`n"                         #Define email signature
@@ -77,14 +87,14 @@ $secureEmailFlag = 1                                                     #Does e
 $emailUser = ''                                                          #Username for smtp account
 $emailPass = ''                                                          #Password for smtp account
 $smtpClient = ""                                                         #Define alternative email client
-$emailPort = ""                                                          #Define port for email client
+$emailPort = 587                                                         #Define port for email client
 ######################################################
 #Slack particulars
 $SlackFlag = 0                                                           #should the script send a message to slack?
 $uriSlack = ""
 ######################################################
 #send messages to a Teams channel via a webhook
-$TeamsFlag = 0                                                           #should the script send a message to Teams?
+$TeamsFlag = 1
 $webHook = ""
 ######################################################
 $ppmsRegPath = "HKCU:\Software\Microscopy\PPMSscript"                    #current user reg path

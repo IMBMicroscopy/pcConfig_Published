@@ -884,8 +884,14 @@ $configureSheet = {
                 $spreadsheetList += $thisSpreadsheet
             }else{break}
         }
-        $spreadsheetID = ($spreadsheetList[$spreadsheetList.count-1]).ID
-        $sheetTitle = ($spreadsheetList[$spreadsheetList.count-1]).Title
+        
+        #if we found the latest spreadsheet, update the sheetTitle and ID
+        $tempSpreadsheetID = ($spreadsheetList[$spreadsheetList.count-1]).ID
+        $tempSheetTitle = ($spreadsheetList[$spreadsheetList.count-1]).Title
+        if(![string]::IsNullOrEmpty($tempSheetTitle) -and ![string]::IsNullOrEmpty($tempSpreadsheetID)) {
+            $sheetTitle = $tempSheetTitle
+            $spreadsheetID = $tempSpreadsheetID
+        }
 
         #if sheet exists check its size, if it's too big, create a new spreadsheet.  If it doesnt exist, create a spreadsheet
         $createSpreadsheetFlag = $false
@@ -926,6 +932,7 @@ $configureSheet = {
             try{
                 $spreadsheetID = (New-GSheetSpreadSheet -accessToken $accessToken -title $sheetTitle -ErrorAction stop).spreadsheetId
                 Set-GFilePermissions -accessToken $accessToken -fileID $spreadsheetID -emailAddress $userAccount -role writer -type group | Out-Null
+                logdata "new spreadsheet created with spreadsheetID: $spreadsheetID and sheetTitle: $sheetTitle"
             }
             catch{logdata "couldnt make new spreadsheet"}
         }
@@ -1118,19 +1125,13 @@ $trackingScript = {
         $runTime = [math]::Round(((Get-date).Ticks - $start)/10000000,1)
         Logdata "current runtime = $runTime seconds"
 
-        ##Report Logon to PPMS Server####################
+        ##check if PPMS Server exists for later use####################
         if($reportToPPMS -eq 1){
             if(![string]::IsNullOrEmpty($ppmsURL) -and ![string]::IsNullOrEmpty($ppmsID) -and ![string]::IsNullOrEmpty($userName) -and ![string]::IsNullOrEmpty($ppmsCode)){
-                logdata "`r`n---------------PPMS Logon Tracker---------------"
+                logdata "`r`n---------------PPMS Exists?---------------"
                 if(testURL $ppmsURL){
-                    try{
-                        $ppmsLogon = Invoke-RestMethod -uri "$ppmsURL/rt.asp?i=$ppmsID&u=$userName&f=1" -Method Post -Body "$ppmsCode" -ContentType "application/x-www-form-urlencoded"  #send ppms server user and system details for tracking
-                        logdata "ppms logon : $ppmsLogon"
-                        $ppmsExists = $true
-                    }catch{
-                        logdata "something went wrong in report login to ppms"
-                        $ppmsExists = $false
-                    }
+                    logdata "ppms website exists"
+                    $ppmsExists = $true
                 }else{
                     logdata "ppms website appears to be down"
                     $ppmsExists = $false
@@ -1342,7 +1343,9 @@ $trackingScript = {
                     $wroteDataFlag = $false
                     if($foundGUIDFlag){  
                         try{$spreadsheetURL = Get-ItemPropertyValue -Path $softwareRegPath -name spreadsheetURL -ErrorAction Stop}catch{$spreadsheetURL = ""}
+                        start-sleep -Milliseconds 20
                         logdata "update existing session data in $spreadsheetURL"
+                        start-sleep -Milliseconds 20
                         try{
                             $GUIDrange = "$($matchedRow):$($matchedRow)"
                             logdata "GUIDrange = $GUIDrange"

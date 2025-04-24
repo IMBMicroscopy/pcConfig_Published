@@ -1,16 +1,21 @@
 Configure PC script
 
-	Double click on "runMe.vbs" to configure the PC
-		If asked, Click “R” for “Run Once”
-		Click Yes to run the script as administrator
-		Type Y when prompted.
-		The script will now install the required powershell modules and components and configure the PC which may take a few minutes, these steps include:
-			Disables Fast User Switching
-			Disables Screensaver password
-			Disables Lock screen
-			Configures folder permissions
-			Creates a c:\logs folder
-			Creates a logoff icon on the desktop
+To manually install only this script:
+
+Login as an administrator
+
+Double click on "runMe.vbs" to configure the PC
+	If asked, Click “R” for “Run Once”
+	Click Yes to run the script as administrator
+	Type Y when prompted.
+	The script will now install the required powershell modules and components and configure the PC which may take a few minutes, these steps include:
+		Disables Fast User Switching
+		Disables Screensaver password
+		Disables Lock screen
+		Configures folder permissions
+		Creates a c:\logs folder
+		Creates a logoff icon on the desktop
+
 		Note don’t touch the configurePC.ps1 file unless you know what you’re doing.
 
 

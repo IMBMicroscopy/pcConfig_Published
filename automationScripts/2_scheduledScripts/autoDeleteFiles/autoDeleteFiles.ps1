@@ -422,8 +422,12 @@ $getUser = {
 
 $getPCname = {
     #get PCname
-    try{($PCname = Get-ItemPropertyValue $ppmsRegPath -Name pcName -ErrorAction Stop)}
-    catch{$PCname = [string]($env:COMPUTERNAME)}
+    $PCname = try{(Get-ItemPropertyValue -Path $LM_rootPath\PPMSscript -name systemName -ErrorAction Stop) }catch{$system = [string]($env:COMPUTERNAME)}
+}
+
+$getFullName = {
+    #get users full name
+    try{$userFullname = (Get-ItemPropertyValue -Path $ppmsregPath -name userFullname -ErrorAction Stop)}catch{$userFullName = $username}
 }
 
 Function Log {
@@ -453,8 +457,8 @@ $sendEmail = {
     If($emailFlag){
         if(testURL -inputURL $smtpClient -port $emailPort ){
             #email message
-            $emailSubject = "Attention - $PCname"   
-            $emailBody = $emailMsg
+            $emailSubject = "Attention - $PCname - autoDelete script"   
+            $emailBody = "System: $pcName`r`nUser Name: $username`r`nFull Name: $userFullname`r`n`r`n" + $msg
 
             $secpasswd = ConvertTo-SecureString $emailPass -AsPlainText -Force #convert plain text email password to hashed password
             $credentials = New-Object System.Management.Automation.PSCredential ("$emailUser", $secpasswd) #generate a hashed credential for secure email server
@@ -484,7 +488,7 @@ $sendSlack = {
     #Slack message
         $author = $PCname
         $Title =  "autoDelete script"
-        $message = "low HDD space after scriptrun at $USERNAME login`r`n Adjust config script parameters`r`n Logfile saved to $logPath"
+        $message = "low HDD space after scriptrun at $fullUsername($USERNAME) login`r`n Adjust config script parameters`r`n Logfile saved to $logPath"
         $channel = "equipment"
         $icon = ":microscope:" 
         $color = "#FFA500"  #orange
@@ -512,7 +516,7 @@ $sendTeams = {
     If($teamsFlag){
         #Teams message
         $script =  "AutoDelete script"
-        $message = "low HDD space warning <br/> Username: $USERNAME"
+        $message = "$msg  <br/> <br/> Full Name: $userFullname <br/> Username: $USERNAME"  #"low HDD space warning <br/> Username: $USERNAME"
         $text = $script + "<br/>" + $message
 
         if(testURL $webHook){
@@ -759,6 +763,7 @@ $sendMsg = {
 ### Custom Code ###
 makeKey $autoDeleteRegPath
 . $getPCname
+. $getFullName
 start-sleep -Seconds 5
 $goFlag = Get-ItemPropertyValue -Path $LM_rootPath -name runAutoDeleteFlag #since system has no internet, get webflag from registry
 if($goFlag){

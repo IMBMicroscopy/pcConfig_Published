@@ -5,13 +5,15 @@ Requires: Existing instrument in PPMS for full functionality
 	Alternatively, at installation, you will be asked to select the facility and instrument from a popup window, there is also a fallback setting in the ppmsConfig.ps1 	file to match the facility and instrument name in ppms
 
 Download Instructions:
-	Sign in to Github, and download the “pcConfig” code repository as a .zip file
+	Download the “pcConfig” code repository as a .zip file
 	Rename the downloaded folder from “pcConfig-main” to “pcConfig”
-	
+
+
 Installation instructions:
 	Log in to the Microscope PC or VM as a local administrator
 	If this is a new PC/VM install, copy the downloaded “pcConfig” folder to a location such as “C:\ “ or “C:Windows\” (Preferred)
-	
+	If this is a PC/VM that already has a “pcConfig” folder with existing required scripts, then copy the contents of the downloaded “pcConfig” folder to the existing “pcConfig” folder on the PC/VM.
+
 	Note:  On a new PC/VM with windows 10 or later you wont need to install .dotNet etc in the later steps, but if you're running Windows 7 you may need to manually first install the correct versions of:
 	dotNet, WMF etc which are included in each scripts sub-folders listed below as required. 
 
@@ -20,7 +22,7 @@ Installation instructions:
 
 	To Install all of the scripts automatically:
 		If this is a new facility install
-			Edit the parameters in the "config.ps1" or "settings.ps1" file in each script sub-folder first
+		Edit the parameters in the "config.ps1" or "settings.ps1" file in each script sub-folder first
 		Ensure there is a suitable desktop wallpaper file in the "2_wallpapers" sub-folder
 		Double click the runMe_InstallAllScripts.vbs file
 		Click Yes to run the script as adminstrator if required
@@ -72,7 +74,7 @@ Installation instructions:
 	
 	Logging:
 		Each script will have logging settings that you may enable/disable in their "config.ps1" file
-		By default the generated logfiles are saved to "c:\scriptLogs"
+		By default the generated logfiles are saved to "c:\Logs"
 
 	Other Scripts:	
 		Install any other required scripts in the “pcConfig” directory specific to that system

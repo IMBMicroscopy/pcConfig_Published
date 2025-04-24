@@ -1,0 +1,11 @@
+ppmsSoftwareTracker script
+
+Script to track software used and report to a google sheet as configured in "ppmsTracker_Settings"
+
+Double click on "runMe.vbs" to configure the PC
+	Click Yes to run the script as administrator
+	Type A or Y when prompted.
+	The script will now install the required powershell modules and components and configure the PC which may take a few minutes, then the script will close.
+
+
+To uninstall, Right click and open/run the uninstall script

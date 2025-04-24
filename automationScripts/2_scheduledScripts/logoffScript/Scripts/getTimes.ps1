@@ -8,20 +8,20 @@ nextMins = minutes until next booking
 nextUser = next booked user
 
 example 1:
-    Booking A = 7am-8am user = mary
-    Booking B = 8am-9am user = nick
+    Booking A = 7am-8am user = j.springfield
+    Booking B = 8am-9am user = n.condon
     If the current time is 8am
     Then: nowMins = 0, nowUser = "", nextMins = 0, nextUser = ""
     The correct output should be
-    nowMins = 0, nowUser = "mary", nextMins = 0, nextUser = "nick"
+    nowMins = 0, nowUser = "j.springfield", nextMins = 0, nextUser = "n.condon"
 
 example 2:
-    Booking A = 7am-8am user = mary
-    Booking B = 8am-9am user = nick
+    Booking A = 7am-8am user = j.springfield
+    Booking B = 8am-9am user = n.condon
     Booking C = 10am-11am user = j.bloggs
     Then: nowMins = 0, nowUSer = "", nextMins = 120, nextUser = "j.bloggs"
     The correct output shoulod be
-    nowMins = 0 nowUSer = "mary", nextMins = 0, nextUser = "nick"
+    nowMins = 0 nowUSer = "j.springfield", nextMins = 0, nextUser = "n.condon"
 
 The following code allows me to fix this issue, however i need a way to convert the runsheet users full name to the user login
 Ideally stratocore would fix the results returned in the "getBooking" and "nextBooking" API calls

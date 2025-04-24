@@ -1,7 +1,7 @@
 googleSoftwareTracker script
 
-Script to track software used and report to a google sheet as configured in "googleSoftware_settings.ps1"
-The list of software is stored on a website table as defined in "googleSoftware_settings.ps1"
+Script to track software used and report to a google sheet as configured in "googleSoftware_config.ps1"
+The list of software is stored on a website table as defined in "googleSoftware_config.ps1"
 Can also report user logins to ppms server as configured in "1_ppmsConfig\ppmsConfig.ps1"
 Edit these two configuration scripts as required when installing in a new facility
 

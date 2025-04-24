@@ -1,5 +1,5 @@
 ' Enter the filename of the script to launch'
-fileName = "configurePC.ps1"
+fileName = "ppmsTracker.ps1"
 
 Dim strPath, objFSO, objFile, strFolder, filePath, command, shell
 

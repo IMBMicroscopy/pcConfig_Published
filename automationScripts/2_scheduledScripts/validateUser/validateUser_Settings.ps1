@@ -3,7 +3,7 @@
 
 ######################################################
 #email particulars
-$emailFlag = 0                                                           #Send email notifications?                                                    
+$emailFlag = 1                                                           #Send email notifications?                                                    
 $emailToAdmin = ''                                                       #Define email account to send Incident reports to
 $emailFrom = ''                                                          #Define email account in From address 
 $emailSig = "Kind Regards,`r`n"+"Microscopy`r`n"                         #Define email signature
@@ -11,7 +11,7 @@ $secureEmailFlag = 1                                                     #Does e
 $emailUser = ''                                                          #Username for smtp account
 $emailPass = ''                                                          #Password for smtp account
 $smtpClient = ""                                                         #Define alternative email client
-$emailPort = ""                                                          #Define port for email client
+$emailPort = 587                                                         #Define port for email client
 ######################################################
 #Slack particulars
 $SlackFlag = 0                                                           #should the script send a message to slack?                                                        
@@ -22,7 +22,7 @@ $icon = ":microscope:"
 $color = "#FFA500"  #orange
 ######################################################
 #send messages to a Teams channel via a webhook
-$TeamsFlag = 0                                                           #should the script send a message to Teams?
+$TeamsFlag = 1
 $webHook = ""
 #####################################################
 $LogoffTime = 60                                                         #How long in seconds should the popup windows stay on screen before logging off the user
@@ -45,10 +45,10 @@ $logToFile = $true                                                       #enable
 $logToConsole = $true                                                    #enable/disable logging to console
 ######################################################
 #settings URL for global flag location
-$getSettingsFromURLFlag = 0                                              #Enable/Disable Query URL table for global script settings
+$getSettingsFromURLFlag = 1                                              #Enable/Disable Query URL table for global script settings
 $settingsURL = ""                                                        #URL for script settings
-$settingsTableName = ""                                                  #Table to query for global enable/disable flags
-$fallbackFlag = $true                                                    #If website or setting isnt found, fallback to these values
+$settingsTableName = "Global Script Settings"                            #Table to query for global enable/disable flags
+$fallbackFlag = $false                                                   #If website or setting isnt found, fallback to these values
 ######################################################
 $retries = 6                                                             #number of retries to check if ppmsConfig has run
 $waitTime = 10                                                           #wait time in seconds between retries

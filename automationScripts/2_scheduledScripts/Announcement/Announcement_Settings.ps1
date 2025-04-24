@@ -1,7 +1,7 @@
 ﻿###########################################################################################################################
 $enableAnnouncements = 1                                               #enable/disable (1/0) running this script to show announcements
-$softwareURL = ""                                                      #URL for software table/s
-$softwareTableName = ""                                                #Table to query for Announcements
+$softwareURL = ""                                                      #URL for announcement table/s
+$softwareTableName = "Announcements"                                   #Table to query for Announcements
 $URLTimeout = 10                                                       #maximum time to query website for announcements
 $popUpTimer = 60                                                       #duration of announcement popup in seconds
 $maxRandom = 5                                                         #pick a random number between 1 and maxRandom to show the popup, if Random is enabled
@@ -15,9 +15,9 @@ $logToFile = 1                                                         #enable/d
 $logToConsole = 1                                                      #enable/disable (1/0) logging to console
 ######################################################
 #settings URL for global flag location
-$getSettingsFromURLFlag = 0                                            #Enable/Disable Query URL table for global script settings
-$settingsURL = ""                                                      #URL for script settings
-$settingsTableName = ""                                                #Table to query for global enable/disable flags
+$getSettingsFromURLFlag = 1                                            #Enable/Disable Query URL table for global script settings
+$settingsURL = ""                                                      #URL for script settings table
+$settingsTableName = "Global Script Settings"                          #Table to query for global enable/disable flags
 $fallbackFlag = $false                                                 #If website or setting isnt found, fallback to these values
 ######################################################
 $taskName = "Announcements"                                            #name of task to create
@@ -25,5 +25,5 @@ $taskPath = "Microscopy"                                               #task sub
 $scriptToRun = "runMe.vbs"                                             #launch vbs script required for easy task scheduler opening of powershell files
 $atLogon = $true                                                       #run task once at user logon if true, else run every minute if false
 $asSystem = $false                                                     #run task as system if true, else run as Users
-$asAdmin = $false                                                         #if $true, run task with highest priveleges but as regular user
+$asAdmin = $false                                                      #if $true, run task with highest priveleges but as regular user
 ######################################################
