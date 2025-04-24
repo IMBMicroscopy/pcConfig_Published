@@ -1,5 +1,6 @@
 # pcConfig
 ## Collection of powershell scripts for the automatic configuration, management and control of lab PCs.
+
 Tools include:
 
 ### pcConfig
@@ -10,6 +11,7 @@ Tools include:
     create logoff button on desktop
 
 ### ppmsConfig
+    Requires the Stratocore PPMS booking platform
     Autodetection and installation of PPMS system parameters based on PC name (with manual override)
     Configuration settings for subsequent scripts
     
@@ -26,6 +28,7 @@ Tools include:
     reporting to admin via email/slack/teams when storage cant be cleared
     
 ### controlPanel
+    Requires the Stratocore PPMS booking platform
     PPMS control panel (report incidents, quick book, current and next session info, email alerts etc)
   ![Control Panel](https://github.com/user-attachments/assets/940d0543-16a2-4c9b-8b54-1d9de19642f1)
   
@@ -37,6 +40,7 @@ Tools include:
     configurable via webpage table
 
 ### logoffScript
+    Requires the Stratocore PPMS booking platform
     Logoff user automatically based on configurable logoff parameters 
     Allow pre- and post booking usage
     Email alerts
@@ -52,9 +56,11 @@ Tools include:
   ![Logoff Panel 2](https://github.com/user-attachments/assets/eb0c0948-4aee-4426-997a-a6ff8a08eb7c)
 
 ### ppmsTracker
+    Requires the Stratocore PPMS booking platform
     Track and report user login to PPMS
     
 ### validateUser
+    Requires the Stratocore PPMS booking platform
     Validate user at logon
     confirms the user is active and exists in PPMS, else notifies them and logoffs off
     reports denied access to admin email/slack/teams
