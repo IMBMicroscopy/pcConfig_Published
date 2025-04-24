@@ -1,6 +1,12 @@
 # pcConfig
 ## Collection of powershell scripts for the automatic configuration, management and control of lab PCs.
 
+These tools have evolved and been developed independently over many years through our operational needs in our own facility
+Each tool can be installed/used independently of the others in most cases, if they dont require PPMS to operate (indicated below)
+However they can be automatically installed together (after first time configuration for your facility) with a double click on a single script
+This has saved us tremedously in installation and configuration time on our microscope PCs and analysis servers
+
+
 ## Tools include:
 
 ### pcConfig
