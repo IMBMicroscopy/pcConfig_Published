@@ -47,8 +47,8 @@ $ppmsFlag = 1                                                            #Is PPM
 ######################################################
 $lastSessionFlag = 1                                                     #Show popup to warn current user if they are the last user on the system today, 1=Yes, 0=No, Only works if VMFlag = 0
 $lastSessionWarning = 60                                                 #How long in minutes after current session to check if theres a next session, if value = "-1", then check until midnight, modify logoff popup as required
-$VMFlag = 1                                                              #If value = 1 (True) then dont allow shutdown of PC
-$logoffUserFlag = 1                                                      #If enabled automatic Logoff of the user will occur, if disabled, the popup will indicate how long past the users booking they have remained logged in
+$VMFlag = 0                                                              #If value = 1 (True) then dont allow shutdown of PC
+$logoffUserFlag = 0                                                      #If enabled automatic Logoff of the user will occur, if disabled, the popup will indicate how long past the users booking they have remained logged in
 ######################################################
 #All PPMS Timer values in minutes
 $AlertLong = 240                                                         #Value must be positive (-1 to disable). For bookings longer than 8hours, specify how many minutes before the end of their booking the dialog box appears to warn a user their booking is running out

@@ -41,13 +41,14 @@ $asAdmin = $false                                                         #if $t
 
 
 
+
 ############################################################################################################
 #Logoff Script settings
 $ppmsFlag = 1                                                            #Is PPMS installed on the system? 1=Yes, 0=No
 ######################################################
 $lastSessionFlag = 1                                                     #Show popup to warn current user if they are the last user on the system today, 1=Yes, 0=No, Only works if VMFlag = 0
 $lastSessionWarning = 60                                                 #How long in minutes after current session to check if theres a next session, if value = "-1", then check until midnight, modify logoff popup as required
-$VMFlag = 1                                                              #If value = 1 (True) then dont allow shutdown of PC
+$VMFlag = 0                                                              #If value = 1 (True) then dont allow shutdown of PC
 $logoffUserFlag = 1                                                      #If enabled automatic Logoff of the user will occur, if disabled, the popup will indicate how long past the users booking they have remained logged in
 ######################################################
 #All PPMS Timer values in minutes
