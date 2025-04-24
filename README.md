@@ -14,6 +14,8 @@
     Requires the Stratocore PPMS booking platform
     Autodetection and installation of PPMS system parameters based on PC name (with manual override)
     Configuration settings for subsequent scripts
+<br>![Script Settings](https://github.com/user-attachments/assets/dd53e04f-78c2-49e8-bef5-a3540c9901f6)<br>
+
     
 ### wallpaper
     Install custom desktop wallpaper
@@ -22,7 +24,10 @@
 ### announcement
     Facility announcements and questionaires
     Create customised one-off, repeating, random announcements from a webpage and display on instrument pcs
-    
+<br>![Announcements](https://github.com/user-attachments/assets/88981e1d-56eb-46ff-96b8-df5022d8a73a)<br>
+<br>![Questionaire](https://github.com/user-attachments/assets/a1eb55a9-185c-46f7-bbaa-f683b6f86de9)<br>
+
+
 ### autoDeleteFiles
     Configurable Autodeletion of files by location, age and filetype to manage multiple HDD space
     reporting to admin via email/slack/teams when storage cant be cleared
@@ -36,8 +41,13 @@
 
     
 ### googleSoftwareTracker
-    Track and report multiple software use to google sheets
+    Track and report multiple simultaneous software use to google sheets
+    Track remote vs local logins
+    Gather PC hardware configuration and usage stats
     configurable via webpage table
+<br>![Software tracker](https://github.com/user-attachments/assets/6db99d9d-c3c1-4af4-9d91-db1b92206ff5)<br>
+<br>![google sheet](https://github.com/user-attachments/assets/53ebe704-411c-4290-bcad-d0cd6b29d0e2)<br>
+
 
 ### logoffScript
     Requires the Stratocore PPMS booking platform
