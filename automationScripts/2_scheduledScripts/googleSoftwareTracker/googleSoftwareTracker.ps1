@@ -118,30 +118,44 @@ function testURL {
 
 $getSettingsFromURL = {
     $settingsTable = [Ordered]@{}
+
     if($getSettingsFromURLFlag){
         #get settings table content from URL 
         $cellText = $autodeleteList = $table = ""
         $propertyValues = @()
         $ppmsTimeout = try{(Get-ItemPropertyValue -Path $ppmsregPath -name ppmsTimeout -ErrorAction Stop)}catch{$ppmsTimeout = ""}
 
-        if(testURL $settingsURL){
-            Try{
+        if (testURL $settingsURL) {
+            Try {
                 logdata "getting settings from website"
-                $NewHTMLObject = New-Object -com "HTMLFILE"
-                $RawHTML = Invoke-WebRequest -TimeoutSec $ppmsTimeout -Uri $settingsURL -UseBasicParsing | Select-Object -ExpandProperty RawContent 
-                $NewHTMLObject.designMode = "on"
-                $RawHTML = [System.Text.Encoding]::Unicode.GetBytes($RawHTML)
-                try{$NewHTMLObject.write($RawHTML)}
-                catch{$NewHTMLObject.ihtmlDocument2_write($RawHTML)}
-                $NewHTMLObject.Close()
-                $NewHTMLObjectBody = $NewHTMLObject.body
-                $DivObjects = [array]$($NewHTMLObjectBody.getElementsByTagName("div"))
-                $table = [array]$($NewHTMLObjectBody.getElementsByTagName("TABLE"))
-                $table = $table | Where{$_.caption.innerText -eq $settingsTableName}
-            }Catch {
-                logdata "URL or Table not found"
-            }
-        }
+
+                # Initialize $RawHTML
+                $RawHTML = $null
+
+                try {
+                    $RawHTML = Invoke-WebRequest -TimeoutSec $ppmsTimeout -Uri $settingsURL -UseBasicParsing | Select-Object -ExpandProperty RawContent
+                    logdata "Successfully retrieved content using Invoke-WebRequest."
+                }
+                catch {
+                    logdata "Invoke-WebRequest failed: $($_.Exception.Message)"
+                }
+
+                # Proceed only if $RawHTML has content
+                if ($RawHTML -ne $null) {
+                    $NewHTMLObject = New-Object -com "HTMLFILE"
+                    $NewHTMLObject.designMode = "on"
+                    $RawHTMLBytes = [System.Text.Encoding]::Unicode.GetBytes($RawHTML)
+                    try { $NewHTMLObject.write($RawHTMLBytes) }
+                    catch { $NewHTMLObject.ihtmlDocument2_write($RawHTMLBytes) }
+                    $NewHTMLObject.Close()
+            
+                    $NewHTMLObjectBody = $NewHTMLObject.body
+                    $DivObjects = [array]$($NewHTMLObjectBody.getElementsByTagName("div"))
+                    $table = [array]$($NewHTMLObjectBody.getElementsByTagName("TABLE"))
+                    $table = $table | Where { $_.caption.innerText -eq $settingsTableName }
+                }else {logdata "No content retrieved from $settingsTableName"}
+            }Catch {logdata "$settingsURL unreadable (bad cert.?) or Table not found"}
+        }else {logdata "$settingsURL not found"}
 
         If(![string]::IsNullOrEmpty($table)){
             $columns = $table.cells.length/$table.rows.length #get number of columns
@@ -173,8 +187,8 @@ $getSettingsFromURL = {
                     $settingsTable.add($propertyName, $propertyValues)
                 }
             }
-        }
-    }
+        }else{logdata "$settingsTableName is empty or not found"}
+    }else{logdata "getSettingsFromURLFlag is false, dont retrieve settings from $settingsURL"}
 }
 
 function goNoGo ($webFlag){   
@@ -352,14 +366,6 @@ $makeTask = {
     }
 }
 
-$unblockFiles = {
-    if($madeTask){
-        Try{
-            Get-ChildItem $scriptPath -Recurse | Unblock-File -ErrorAction SilentlyContinue | Out-Null        #unblock downloaded files to allow script execution
-            logdata "scriptPath $scriptPath has been unblocked" 
-        }catch{logdata "could unblock $scriptPath"}
-    }
-}
 
 $endScript = {
     if($ranAsAdminFlag){
@@ -676,7 +682,6 @@ $sessionStats = {
     New-ItemProperty -Path $softwareRegPath -name lastRAM75 -Value $([int]$RAM75) -Force | Out-Null
     New-ItemProperty -Path $softwareRegPath -name lastRAM100 -Value $([int]$RAM100) -Force | Out-Null
 
-    logdata "totalTime = $totalTime"
     $runTime = [math]::Round(((Get-date).Ticks - $start)/10000000,1)
     Logdata "current runtime = $runTime seconds"
 

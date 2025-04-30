@@ -1,4 +1,5 @@
-﻿
+﻿[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
+
 #Get PPMS Booking Information
 Try{
     logdata "userEmails - attempting to contact ppms server"

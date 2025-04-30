@@ -108,30 +108,44 @@ function testURL {
 
 $getSettingsFromURL = {
     $settingsTable = [Ordered]@{}
+
     if($getSettingsFromURLFlag){
         #get settings table content from URL 
         $cellText = $autodeleteList = $table = ""
         $propertyValues = @()
         $ppmsTimeout = try{(Get-ItemPropertyValue -Path $ppmsregPath -name ppmsTimeout -ErrorAction Stop)}catch{$ppmsTimeout = ""}
 
-        if(testURL $settingsURL){
-            Try{
+        if (testURL $settingsURL) {
+            Try {
                 logdata "getting settings from website"
-                $NewHTMLObject = New-Object -com "HTMLFILE"
-                $RawHTML = Invoke-WebRequest -TimeoutSec $ppmsTimeout -Uri $settingsURL -UseBasicParsing | Select-Object -ExpandProperty RawContent 
-                $NewHTMLObject.designMode = "on"
-                $RawHTML = [System.Text.Encoding]::Unicode.GetBytes($RawHTML)
-                try{$NewHTMLObject.write($RawHTML)}
-                catch{$NewHTMLObject.ihtmlDocument2_write($RawHTML)}
-                $NewHTMLObject.Close()
-                $NewHTMLObjectBody = $NewHTMLObject.body
-                $DivObjects = [array]$($NewHTMLObjectBody.getElementsByTagName("div"))
-                $table = [array]$($NewHTMLObjectBody.getElementsByTagName("TABLE"))
-                $table = $table | Where{$_.caption.innerText -eq $settingsTableName}
-            }Catch {
-                logdata "URL or Table not found"
-            }
-        }
+
+                # Initialize $RawHTML
+                $RawHTML = $null
+
+                try {
+                    $RawHTML = Invoke-WebRequest -TimeoutSec $ppmsTimeout -Uri $settingsURL -UseBasicParsing | Select-Object -ExpandProperty RawContent
+                    logdata "Successfully retrieved content using Invoke-WebRequest."
+                }
+                catch {
+                    logdata "Invoke-WebRequest failed: $($_.Exception.Message)"
+                }
+
+                # Proceed only if $RawHTML has content
+                if ($RawHTML -ne $null) {
+                    $NewHTMLObject = New-Object -com "HTMLFILE"
+                    $NewHTMLObject.designMode = "on"
+                    $RawHTMLBytes = [System.Text.Encoding]::Unicode.GetBytes($RawHTML)
+                    try { $NewHTMLObject.write($RawHTMLBytes) }
+                    catch { $NewHTMLObject.ihtmlDocument2_write($RawHTMLBytes) }
+                    $NewHTMLObject.Close()
+            
+                    $NewHTMLObjectBody = $NewHTMLObject.body
+                    $DivObjects = [array]$($NewHTMLObjectBody.getElementsByTagName("div"))
+                    $table = [array]$($NewHTMLObjectBody.getElementsByTagName("TABLE"))
+                    $table = $table | Where { $_.caption.innerText -eq $settingsTableName }
+                }else {logdata "No content retrieved from $settingsTableName"}
+            }Catch {logdata "$settingsURL unreadable (bad cert.?) or Table not found"}
+        }else {logdata "$settingsURL not found"}
 
         If(![string]::IsNullOrEmpty($table)){
             $columns = $table.cells.length/$table.rows.length #get number of columns
@@ -163,8 +177,8 @@ $getSettingsFromURL = {
                     $settingsTable.add($propertyName, $propertyValues)
                 }
             }
-        }
-    }
+        }else{logdata "$settingsTableName is empty or not found"}
+    }else{logdata "getSettingsFromURLFlag is false, dont retrieve settings from $settingsURL"}
 }
 
 function goNoGo ($webFlag){   
@@ -342,14 +356,6 @@ $makeTask = {
     }
 }
 
-$unblockFiles = {
-    if($madeTask){
-        Try{
-            Get-ChildItem $scriptPath -Recurse | Unblock-File -ErrorAction SilentlyContinue | Out-Null        #unblock downloaded files to allow script execution
-            logdata "scriptPath $scriptPath has been unblocked" 
-        }catch{logdata "could unblock $scriptPath"}
-    }
-}
 
 $endScript = {
     if($ranAsAdminFlag){
@@ -376,6 +382,21 @@ $endScript = {
 
 
 ### Custom scripts ###
+$unblockFiles = {
+    #find root pcConfig folder
+    $rootIndex = $scriptPath.IndexOf($rootName)
+    $rootPath = $ScriptPath.Substring(0,$rootIndex) + $rootName 
+
+    # Get all files recursively
+    try {
+        Get-ChildItem -Path "C:\Windows\pcConfig" -File -Recurse -ErrorAction Stop | Unblock-File -ErrorAction Stop
+        logdata "Files unblocked successfully"
+    }
+    catch {
+        logdata "Failed to unblock files: $($_.Exception.Message)"
+    }
+}
+
 $installModules = {
     logdata "check for installed modules"
     #configure powershell module installation
@@ -408,12 +429,17 @@ $installModules = {
 
 $configurations = {
 
-    #enable script execution
-    try{
-        Set-ExecutionPolicy -ExecutionPolicy unrestricted -Scope LocalMachine -Force -ErrorAction SilentlyContinue
-        logdata "enable script execution"
-    }
-    catch{logdata "couldnt update execution policy"}
+    #set execution policy
+    try {$currentPolicy = Get-ExecutionPolicy -Scope LocalMachine}
+    catch{logdata "couldnt get current execution Policy"}
+    
+    if ($currentPolicy -ne 'Bypass') {
+        try {
+            Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force -ErrorAction Stop
+            $currentPolicy = Get-ExecutionPolicy -Scope LocalMachine
+            logdata "Execution policy successfully set to: $currentPolicy"
+        }catch{logdata "Couldn't update execution policy"}
+    }else{logdata "Execution policy already set to: $currentPolicy"}
 
     #set .net TLS security level
     try{
@@ -425,8 +451,8 @@ $configurations = {
 
 
     #set pcConfig permissions
-    $rootIndex = $scriptPath.LastIndexOf($rootName)
-    $rootPath = $ScriptPath.Substring(0,$rootIndex) + $rootName + "\"
+    $rootIndex = $scriptPath.IndexOf($rootName)
+    $rootPath = $ScriptPath.Substring(0,$rootIndex) + $rootName #+ "\"
     setFilePermissions $rootPath #set permissions of folder above the one that holds this script
 
     #disable lock PC
@@ -467,6 +493,66 @@ $configurations = {
         logdata "created desktop logoff shortcut"
     }
     catch{logdata "couldnt create desktop logoff shortcut"}
+
+    #disable windows defender to allow scripts to run
+    try{
+        New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender" -Name DisableAntiSpyware -Value 1 -Force | Out-Null
+        logdata "windows defender has been disabled" 
+    }
+    catch{logdata "unable to disable windows defender"}
+
+    # Set Firefox Maintenance Service registry setting to allow background updates without admin
+    $regPath = "HKLM:\SOFTWARE\Mozilla\MaintenanceService"
+
+    # Check if the key exists
+    if (!(Test-Path $regPath)) {
+        # Create the key if missing
+        New-Item -Path "HKLM:\SOFTWARE\Mozilla" -Name "MaintenanceService" -Force
+    }
+
+    # Set AttemptAdmin to 1
+    Set-ItemProperty -Path $regPath -Name "AttemptAdmin" -Value 1 -Type DWord
+
+    # Confirm the setting
+    $attemptAdmin = Get-ItemPropertyValue -Path $regPath -Name "AttemptAdmin"
+    logdata "Mozilla Maintenance Service AttemptAdmin is now set to: $attemptAdmin"
+
+    # Make sure MozillaMaintenance service is set to Automatic
+    Set-Service -Name MozillaMaintenance -StartupType Automatic
+
+    # Start the service if it's not running
+    Start-Service -Name MozillaMaintenance -ErrorAction SilentlyContinue
+
+    logdata "Mozilla Maintenance Service set to Automatic and started (if not running)."
+
+
+    #set UAC to minimum to prevent popups when scripts run
+    $uacPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+    # Read current values
+    $currentEnableLUA = Get-ItemPropertyValue -Path $uacPath -Name "EnableLUA"
+    $currentPromptBehavior = Get-ItemPropertyValue -Path $uacPath -Name "ConsentPromptBehaviorAdmin"
+    $currentSecureDesktop = Get-ItemPropertyValue -Path $uacPath -Name "PromptOnSecureDesktop"
+    try {
+        Set-ItemProperty -Path $uacPath -Name "EnableLUA" -Value 1
+        Set-ItemProperty -Path $uacPath -Name "ConsentPromptBehaviorAdmin" -Value 0
+        Set-ItemProperty -Path $uacPath -Name "PromptOnSecureDesktop" -Value 0
+
+        logdata "`nUAC settings updated to minimum level." 
+        logdata "A system reboot is required for changes to take full effect." 
+    }
+    catch {
+        logdata "Error updating registry: $_" 
+    }
+
+
+    # Disable Attachment Manager Security to prevent popups when running .vbs files etc
+    $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments"
+    New-Item -Path $regPath -Force | Out-Null
+
+    # Set SaveZoneInformation to 1 (do not save zone info = no warning)
+    Set-ItemProperty -Path $regPath -Name "SaveZoneInformation" -Value 1 -Type DWord
+
+    logdata "Attachment Manager configured: Open File - Security Warning disabled."
 }
 
 
@@ -485,6 +571,7 @@ $elevateFlag = $true #manual override to ensure elevation for this script
 . $makeTask #create task scheduler task to run script regularly
 
 ###custom code ###
+. $unblockFiles #unblock downloaded files so they can run
 . $installModules
 . $configurations
 $madeTask = $true #required to override settings in $endscript to write to registry that would otherwise prevent the installer from progressing

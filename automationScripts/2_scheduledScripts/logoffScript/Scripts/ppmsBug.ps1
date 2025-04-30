@@ -2,6 +2,7 @@
 $sessions = $runsheet = $myNowUser = $myNextUser = ""
 $ppmsBug = $myNowMins = $myNextMins = $null
 $ppmsTimeout = (Get-ItemPropertyValue -Path $ppmsRegPath -name ppmsTimeout) #ppms communications timeout
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
 
 #get day and time
 $day = (Get-Date).tostring("yyyy-MM-dd")

@@ -1,5 +1,6 @@
 ﻿Function findUser([string]$userInput) {
     $ppmsTimeout = (Get-ItemPropertyValue -Path HKCU:\Software\PPMSscript -name ppmsTimeout) #ppms communications timeout
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
 
     $userDetails = ""
     Try{
@@ -20,3 +21,4 @@
         return $userDetails = ""
     }
 }
+

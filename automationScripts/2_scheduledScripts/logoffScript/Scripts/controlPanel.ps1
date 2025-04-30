@@ -1,6 +1,7 @@
 ﻿
 $scriptStart = (Get-Date)
 $scriptStart
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
 
 try { Add-Type -AssemblyName PresentationFramework,System.Windows.Forms} 
 catch { throw "Failed to load Windows Presentation Framework assemblies." }

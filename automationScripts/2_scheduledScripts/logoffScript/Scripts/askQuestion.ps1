@@ -1,4 +1,6 @@
-﻿$QuestionFlag = [int](Get-ItemPropertyValue -Path $ppmsRegPath -name QuestionFlag) #Questionaire enabled if true
+﻿[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
+
+$QuestionFlag = [int](Get-ItemPropertyValue -Path $ppmsRegPath -name QuestionFlag) #Questionaire enabled if true
 
 If($QuestionFlag -eq 1) {
     

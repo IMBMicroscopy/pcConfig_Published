@@ -16,6 +16,7 @@ If(($Severity -ne $null) -and ($incidentDescription -ne "")){
     $ppmsTimeout = (Get-ItemPropertyValue -Path $ppmsRegPath -name ppmsTimeout) #ppms communications timeout
     $ppmsURL = (Get-ItemPropertyValue -Path $ppmsRegPath -name ppmsURL) #PPMS URL
     $pumapiKey = (Get-ItemPropertyValue -Path $ppmsRegPath -name pumapiKey) #PUMAPI key, must have user management turned on
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
 
     Invoke-RestMethod -TimeoutSec $ppmsTimeout -uri $ppmsURL/pumapi/ -method post -body "action=createinc&apikey=$pumapiKey&id=$ppmsID&severity=$severityNumber&descr=$incidentDescription"
 }

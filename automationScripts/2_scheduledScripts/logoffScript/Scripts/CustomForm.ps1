@@ -1,9 +1,9 @@
-﻿#Custom Button Popup Window code
+﻿[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
+
+#Custom Button Popup Window code
 Function New-WPFMessageBox {
 
-    # For examples for use,
-    # https://smsagent.wordpress.com/2017/08/24/a-customisable-wpf-messagebox-for-powershell/
-    
+   
     # Define Parameters
     [CmdletBinding()]
     Param

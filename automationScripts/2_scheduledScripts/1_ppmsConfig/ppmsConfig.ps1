@@ -114,30 +114,44 @@ function testURL {
 
 $getSettingsFromURL = {
     $settingsTable = [Ordered]@{}
+
     if($getSettingsFromURLFlag){
         #get settings table content from URL 
         $cellText = $autodeleteList = $table = ""
         $propertyValues = @()
         $ppmsTimeout = try{(Get-ItemPropertyValue -Path $ppmsregPath -name ppmsTimeout -ErrorAction Stop)}catch{$ppmsTimeout = ""}
 
-        if(testURL $settingsURL){
-            Try{
+        if (testURL $settingsURL) {
+            Try {
                 logdata "getting settings from website"
-                $NewHTMLObject = New-Object -com "HTMLFILE"
-                $RawHTML = Invoke-WebRequest -TimeoutSec $ppmsTimeout -Uri $settingsURL -UseBasicParsing | Select-Object -ExpandProperty RawContent 
-                $NewHTMLObject.designMode = "on"
-                $RawHTML = [System.Text.Encoding]::Unicode.GetBytes($RawHTML)
-                try{$NewHTMLObject.write($RawHTML)}
-                catch{$NewHTMLObject.ihtmlDocument2_write($RawHTML)}
-                $NewHTMLObject.Close()
-                $NewHTMLObjectBody = $NewHTMLObject.body
-                $DivObjects = [array]$($NewHTMLObjectBody.getElementsByTagName("div"))
-                $table = [array]$($NewHTMLObjectBody.getElementsByTagName("TABLE"))
-                $table = $table | Where{$_.caption.innerText -eq $settingsTableName}
-            }Catch {
-                logdata "URL or Table not found"
-            }
-        }
+
+                # Initialize $RawHTML
+                $RawHTML = $null
+
+                try {
+                    $RawHTML = Invoke-WebRequest -TimeoutSec $ppmsTimeout -Uri $settingsURL -UseBasicParsing | Select-Object -ExpandProperty RawContent
+                    logdata "Successfully retrieved content using Invoke-WebRequest."
+                }
+                catch {
+                    logdata "Invoke-WebRequest failed: $($_.Exception.Message)"
+                }
+
+                # Proceed only if $RawHTML has content
+                if ($RawHTML -ne $null) {
+                    $NewHTMLObject = New-Object -com "HTMLFILE"
+                    $NewHTMLObject.designMode = "on"
+                    $RawHTMLBytes = [System.Text.Encoding]::Unicode.GetBytes($RawHTML)
+                    try { $NewHTMLObject.write($RawHTMLBytes) }
+                    catch { $NewHTMLObject.ihtmlDocument2_write($RawHTMLBytes) }
+                    $NewHTMLObject.Close()
+            
+                    $NewHTMLObjectBody = $NewHTMLObject.body
+                    $DivObjects = [array]$($NewHTMLObjectBody.getElementsByTagName("div"))
+                    $table = [array]$($NewHTMLObjectBody.getElementsByTagName("TABLE"))
+                    $table = $table | Where { $_.caption.innerText -eq $settingsTableName }
+                }else {logdata "No content retrieved from $settingsTableName"}
+            }Catch {logdata "$settingsURL unreadable (bad cert.?) or Table not found"}
+        }else {logdata "$settingsURL not found"}
 
         If(![string]::IsNullOrEmpty($table)){
             $columns = $table.cells.length/$table.rows.length #get number of columns
@@ -169,8 +183,8 @@ $getSettingsFromURL = {
                     $settingsTable.add($propertyName, $propertyValues)
                 }
             }
-        }
-    }
+        }else{logdata "$settingsTableName is empty or not found"}
+    }else{logdata "getSettingsFromURLFlag is false, dont retrieve settings from $settingsURL"}
 }
 
 function goNoGo ($webFlag){   
@@ -348,14 +362,6 @@ $makeTask = {
     }
 }
 
-$unblockFiles = {
-    if($madeTask){
-        Try{
-            Get-ChildItem $scriptPath -Recurse | Unblock-File -ErrorAction SilentlyContinue | Out-Null        #unblock downloaded files to allow script execution
-            logdata "scriptPath $scriptPath has been unblocked" 
-        }catch{logdata "could unblock $scriptPath"}
-    }
-}
 
 $endScript = {
     if($ranAsAdminFlag){
@@ -540,10 +546,10 @@ $getPPMSInstrument = {
         #get ppms system details from registry
         try{
             logdata "get system details from $LMRegPath"
-            $SystemName = (Get-ItemPropertyValue -Path $LMRegPath -name systemName -ErrorAction SilentlyContinue)
-            $ppmsPF = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsPF -ErrorAction SilentlyContinue)
-            $ppmsID = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsID -ErrorAction SilentlyContinue)
-            $ppmsCode = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsCode -ErrorAction SilentlyContinue)
+            $SystemName = (Get-ItemPropertyValue -Path $LMRegPath -name systemName -ErrorAction stop)
+            $ppmsPF = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsPF -ErrorAction stop)
+            $ppmsID = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsID -ErrorAction stop)
+            $ppmsCode = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsCode -ErrorAction stop)
         }
         catch{
             logdata "system detail fields not found in $LMRegPath"
@@ -552,10 +558,15 @@ $getPPMSInstrument = {
     }
     else{
          #get ppms instrument details using autoPCname, if valid use them,
-         Logdata "getPPMSinstrument - ppmsPF = $ppmsPF"
+        try{$ppmsPF = (Get-ItemPropertyValue -Path $LMRegPath -name ppmsPF -ErrorAction stop)} #load last used settings if it exists
+        catch{logdata "ppmsPF value not found in registry"}
+
+        logdata "getPPMSinstrument - ppmsPF = $ppmsPF"
+
         if(testURL $ppmsURL){
             try{
                 logdata "retrieve all systems details from ppms"
+
                 $body = "action=Report$systemReport&outformat=json&apikey=$apikey&coreid=$ppmsPF" 
                 $systems = Invoke-RestMethod -TimeoutSec $ppmsTimeout -uri $ppmsURL/API2/ -Method 'POST' -Body $body
                 $systems = $systems | Where-Object Active -eq True
@@ -934,7 +945,6 @@ $logoffDetails = {
 
 
 ### Custom code ###
-#check autodelete web flag, since autodelete script runs as system and has no internet access.
 . $userSelectCore
 . $getPPMSInstrument
 . $getConfigDateTime
@@ -945,6 +955,8 @@ $logoffDetails = {
 . $logoffDetails
 
 . $getSettingsFromURL #get global script settings from web
+
+#check autodelete web flag and set it, since autodelete script runs as system user which doesnt have internet access.
 if(!$settingsTable.DisableAll){
     $goFlag = goNogo $settingsTable.autoDelete #determine if the script should run
     New-ItemProperty -Path $LM_rootPath -name runAutoDeleteFlag -Value $($goFlag.runflag) -Force | Out-Null 
@@ -956,5 +968,4 @@ if(!$settingsTable.DisableAll){
 ### End code ###
 . $endScript #write end info to log
 ###############################################
-
 

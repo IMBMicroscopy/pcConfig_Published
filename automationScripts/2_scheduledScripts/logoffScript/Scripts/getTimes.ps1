@@ -34,6 +34,8 @@ $sessions = $runsheet = $nowUser = $nextUser = ""
 $ppmsBug = $nowMins = $nextMins = $null
 $ppmsTimeout = (Get-ItemPropertyValue -Path $ppmsRegPath -name ppmsTimeout) #ppms communications timeout
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
+
 #PPMS values
 $ppmsURL = 
 $pumapiKey = 

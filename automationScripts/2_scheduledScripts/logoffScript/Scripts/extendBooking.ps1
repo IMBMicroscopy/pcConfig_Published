@@ -1,4 +1,6 @@
 ﻿Function extendBooking {
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 #set TLS1.2 for communications with ppms server
+
     $sessions = ""
     $intervention = ""
     $systems = ""
