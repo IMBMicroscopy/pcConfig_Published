@@ -876,11 +876,15 @@ $configureSheet = {
                 
         #look for latest spreadsheet
         $spreadsheetList = @()
+        $spreadsheetID = ""
+        $sheetTitleName = ""
         for($i = 0;$i -le 100;$i++){
             if($i -eq 0){$postfix = ""}else{$postfix = "_$i"}
             $sheetTitleName = $sheetTitle + $postfix
             try{$spreadsheetID = (Get-GSheetSpreadSheetID -accessToken $accessToken -fileName $sheetTitleName -WarningAction SilentlyContinue -ErrorAction stop )}
             catch{logdata "failed to get spreadsheetID from google"}
+            try{$spreadsheetID = $spreadsheetID[0]}
+            catch{$spreadsheetID = $spreadsheetID}
             If(![string]::IsNullOrEmpty($spreadsheetID)){
                 $thisSpreadsheet = [PSCustomObject]@{
                     Title = $sheetTitleName
@@ -891,7 +895,7 @@ $configureSheet = {
         }
         
         #if we found the latest spreadsheet, update the sheetTitle and ID
-        $tempSpreadsheetID = ($spreadsheetList[$spreadsheetList.count-1]).ID
+        $tempSpreadsheetID = (($spreadsheetList[$spreadsheetList.count-1]).ID)
         $tempSheetTitle = ($spreadsheetList[$spreadsheetList.count-1]).Title
         if(![string]::IsNullOrEmpty($tempSheetTitle) -and ![string]::IsNullOrEmpty($tempSpreadsheetID)) {
             $sheetTitle = $tempSheetTitle
@@ -917,7 +921,7 @@ $configureSheet = {
             foreach($count in $sheetproperties.sheets.properties.gridProperties){
                 $cells += $count.rowCount * $count.columnCount
             }
-            logdata "number of cels in sheet is $cells"
+            logdata "number of cells in sheet is $cells"
             if($cells -ge [int]$maxCells){
                 logdata "existing spreadsheet is too large: $sheetTitle"
                 if($sheetTitle -match "_[0-9]"){$sheetTitle = $sheetTitle -replace "_[0-9]" , "_$([int]$($sheetTitle.Split("_")[1]) + 1)" }
